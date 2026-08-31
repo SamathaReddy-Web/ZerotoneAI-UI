@@ -32,7 +32,7 @@ export function SceneCallout({
 }) {
   return (
     <div
-      className={cn("absolute", !reduceMotion && "animate-fade-in-up", className)}
+      className={cn(!reduceMotion && "animate-fade-in-up", className)}
       style={reduceMotion ? undefined : { animationDelay: `${delayMs}ms` }}
     >
       <div
@@ -52,3 +52,4 @@ export function SceneCallout({
     </div>
   );
 }
+

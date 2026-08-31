@@ -7,140 +7,187 @@ import {
   formworkMaterial,
   groundMaterial,
   helmetAccentMaterial,
+  helmetHarnessMaterial,
   helmetMaterial,
+  neonCircuitMaterial,
   safetyOrangeMaterial,
+  safetyYellowMaterial,
   steelMaterial,
 } from "./materials";
 
-const SITE_SIZE = 13;
+const SITE_SIZE = 16;
 const SLAB_THICKNESS = 0.15;
 
 interface GroundProps {
   y: number;
 }
 
-/** A single hard hat: shell dome, brim ring, and a small "Z" mark built
- * from three thin bars on the front — the Zerotone brand touch, plain
- * geometry (not a texture/decal) so it never depends on a font or image
- * asset loading. Kept low-poly since it's a small background prop. */
-function Helmet({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  const domeGeometry = useMemo(
-    () => new THREE.SphereGeometry(0.17, 14, 10, 0, Math.PI * 2, 0, Math.PI * 0.55),
-    []
-  );
-  const brimGeometry = useMemo(() => new THREE.CylinderGeometry(0.2, 0.2, 0.02, 16), []);
-  const barGeometry = useMemo(() => new THREE.BoxGeometry(0.065, 0.013, 0.006), []);
-  const diagonalGeometry = useMemo(() => new THREE.BoxGeometry(0.082, 0.013, 0.006), []);
+/** Precast concrete barrier beams with realistic cylindrical hollow-core holes */
+function PrecastBarrierStack({ position }: { position: [number, number, number] }) {
+  const beamGeo = useMemo(() => new THREE.BoxGeometry(2.6, 0.38, 0.48), []);
+  const holeGeo = useMemo(() => new THREE.CylinderGeometry(0.09, 0.09, 0.5, 16), []);
+
   return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      <mesh geometry={domeGeometry} material={helmetMaterial} castShadow receiveShadow />
-      <mesh position={[0, -0.02, 0]} geometry={brimGeometry} material={helmetMaterial} castShadow />
-      {/* "Z" mark, tilted to sit flush against the dome's front curve */}
-      <group position={[0, 0.07, 0.15]} rotation={[-0.35, 0, 0]}>
-        <mesh position={[0, 0.028, 0]} geometry={barGeometry} material={helmetAccentMaterial} />
-        <mesh position={[0, -0.028, 0]} geometry={barGeometry} material={helmetAccentMaterial} />
-        <mesh rotation={[0, 0, -0.86]} geometry={diagonalGeometry} material={helmetAccentMaterial} />
+    <group position={position} rotation={[0, 0.38, 0]}>
+      {/* Bottom layer - 2 parallel beams */}
+      <group position={[0, 0.19, -0.26]}>
+        <mesh geometry={beamGeo} material={concreteMaterial} castShadow receiveShadow />
+        <mesh position={[-0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+      </group>
+      <group position={[0, 0.19, 0.26]}>
+        <mesh geometry={beamGeo} material={concreteMaterial} castShadow receiveShadow />
+        <mesh position={[-0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+      </group>
+      {/* Top layer - 1 beam spanning center */}
+      <group position={[0.08, 0.57, 0]}>
+        <mesh geometry={beamGeo} material={concreteMaterial} castShadow receiveShadow />
+        <mesh position={[-0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
+        <mesh position={[0.8, 0, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
       </group>
     </group>
   );
 }
 
-/** A stacked pair of site crates — cheap set dressing that reads as
- * "materials staged on site" without pulling in any external model. */
-function CrateStack({ position }: { position: [number, number, number] }) {
-  const bigGeometry = useMemo(() => new THREE.BoxGeometry(0.8, 0.5, 0.6), []);
-  const smallGeometry = useMemo(() => new THREE.BoxGeometry(0.58, 0.4, 0.46), []);
-  return (
-    <group position={position}>
-      <mesh position={[0, 0.25, 0]} geometry={bigGeometry} material={concreteMaterial} castShadow receiveShadow />
-      <mesh
-        position={[0.06, 0.7, -0.03]}
-        rotation={[0, 0.25, 0]}
-        geometry={smallGeometry}
-        material={steelMaterial}
-        castShadow
-        receiveShadow
-      />
-    </group>
-  );
-}
+/** Glowing AI circuit data pathways running on the blueprint grid */
+function GlowingCircuitTraces() {
+  const traces = useMemo(() => {
+    return [
+      // Main trunk lines flowing to the building foundation
+      { start: [-4.2, 3.2], mid: [-1.8, 3.2], end: [-1.8, 1.4] },
+      { start: [-1.8, 1.4], mid: [-0.6, 1.4], end: [-0.6, 0.6] },
+      { start: [3.4, 3.8], mid: [2.2, 3.8], end: [2.2, 1.8] },
+      { start: [2.2, 1.8], mid: [1.4, 1.8], end: [1.4, 0.5] },
+      { start: [4.0, 1.2], mid: [2.8, 1.2], end: [1.8, 0.6] },
+      // Branch connecting toward the foreground helmet
+      { start: [-0.6, 4.4], mid: [0.8, 4.4], end: [0.8, 3.2] },
+      { start: [0.8, 3.2], mid: [1.4, 3.2], end: [1.4, 2.6] },
+      { start: [-2.5, 4.0], mid: [-1.0, 4.0], end: [-1.0, 3.0] },
+    ];
+  }, []);
 
-/** A standing cable reel — a slim core cylinder with two wide flange
- * discs at each end, built along the shared local Y-axis (so no relative
- * rotation is needed between them) then the whole group is tipped 90° so
- * the reel lies on its side like a spool resting on the ground. */
-function CableReel({ position }: { position: [number, number, number] }) {
-  const coreGeometry = useMemo(() => new THREE.CylinderGeometry(0.07, 0.07, 0.36, 10), []);
-  const flangeGeometry = useMemo(() => new THREE.CylinderGeometry(0.26, 0.26, 0.035, 20), []);
   return (
-    <group position={position} rotation={[Math.PI / 2, 0, 0]}>
-      <mesh geometry={coreGeometry} material={steelMaterial} castShadow receiveShadow />
-      <mesh geometry={flangeGeometry} position={[0, -0.18, 0]} material={safetyOrangeMaterial} castShadow receiveShadow />
-      <mesh geometry={flangeGeometry} position={[0, 0.18, 0]} material={safetyOrangeMaterial} castShadow receiveShadow />
-    </group>
-  );
-}
-
-/** A short site barrier — the small, unmistakably-a-construction-site
- * prop reference sites always show near the perimeter. */
-function Barrier({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  const panelGeometry = useMemo(() => new THREE.BoxGeometry(0.55, 0.22, 0.03), []);
-  const legGeometry = useMemo(() => new THREE.BoxGeometry(0.04, 0.14, 0.04), []);
-  return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      <mesh position={[0, 0.2, 0]} geometry={panelGeometry} material={safetyOrangeMaterial} castShadow receiveShadow />
-      <mesh position={[-0.22, 0.07, 0]} geometry={legGeometry} material={steelMaterial} castShadow />
-      <mesh position={[0.22, 0.07, 0]} geometry={legGeometry} material={steelMaterial} castShadow />
-    </group>
-  );
-}
-
-/** A loose bundle of rebar dowels lying on the ground — thin cylinders
- * clustered together, echoing the exposed rebar up on the building. */
-function RebarBundle({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  const barGeometry = useMemo(() => new THREE.CylinderGeometry(0.018, 0.018, 0.62, 5), []);
-  const offsets = useMemo(
-    () => [
-      [0, 0.018],
-      [0.03, 0.05],
-      [-0.03, 0.05],
-      [0.015, 0.082],
-      [-0.015, 0.082],
-    ],
-    []
-  );
-  return (
-    <group position={position} rotation={[0, rotationY, Math.PI / 2]}>
-      {offsets.map(([x, y], i) => (
-        <mesh key={i} position={[x, y, 0]} geometry={barGeometry} material={steelMaterial} castShadow receiveShadow />
+    <group position={[0, 0.006, 0]}>
+      {traces.map((t, i) => (
+        <group key={`trace-${i}`}>
+          <mesh
+            position={[(t.start[0] + t.mid[0]) / 2, 0, t.start[1]]}
+            geometry={new THREE.BoxGeometry(Math.abs(t.mid[0] - t.start[0]), 0.008, 0.035)}
+            material={neonCircuitMaterial}
+          />
+          <mesh
+            position={[t.mid[0], 0, (t.mid[1] + t.end[1]) / 2]}
+            geometry={new THREE.BoxGeometry(0.035, 0.008, Math.abs(t.end[1] - t.mid[1]))}
+            material={neonCircuitMaterial}
+          />
+          {/* Glowing node junction dot */}
+          <mesh
+            position={[t.end[0], 0.015, t.end[1]]}
+            geometry={new THREE.CylinderGeometry(0.05, 0.05, 0.02, 12)}
+            material={neonCircuitMaterial}
+          />
+        </group>
       ))}
     </group>
   );
 }
 
-/** A small site generator/compressor unit — a boxy body with a short
- * exhaust stack, the "small equipment" beat of the prop list. */
-function Generator({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  const bodyGeometry = useMemo(() => new THREE.BoxGeometry(0.34, 0.26, 0.22), []);
-  const stackGeometry = useMemo(() => new THREE.CylinderGeometry(0.025, 0.025, 0.1, 10), []);
+/**
+ * Photorealistic White Safety Hardhat matching the reference design:
+ * - High-poly smooth dome shell with glossy specular reflections
+ * - Flanged contoured brim with front visor peak
+ * - Central spine reinforcement ridge along crown
+ * - Dual lateral aerodynamic vent flutes
+ * - Dark interior suspension harness visible at base
+ * - Crisp blue "J" logos on front and side
+ */
+export function Helmet({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  // Main Dome Shell (32x24 segments for butter-smooth curve)
+  const domeGeometry = useMemo(
+    () => new THREE.SphereGeometry(0.3, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.54),
+    []
+  );
+  // Visor Brim
+  const brimGeometry = useMemo(() => new THREE.CylinderGeometry(0.34, 0.35, 0.025, 32), []);
+  const frontVisorGeo = useMemo(() => new THREE.BoxGeometry(0.24, 0.02, 0.12), []);
+  // Reinforcement Crown Ridge
+  const crownRidgeGeo = useMemo(() => new THREE.BoxGeometry(0.05, 0.04, 0.52), []);
+  const sideFluteGeo = useMemo(() => new THREE.BoxGeometry(0.035, 0.025, 0.36), []);
+  // Interior Suspension Harness Rim
+  const harnessRingGeo = useMemo(() => new THREE.CylinderGeometry(0.28, 0.28, 0.05, 28, 1, true), []);
+
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
-      <mesh position={[0, 0.13, 0]} geometry={bodyGeometry} material={steelMaterial} castShadow receiveShadow />
-      <mesh position={[0.1, 0.31, 0]} geometry={stackGeometry} material={safetyOrangeMaterial} castShadow />
+      {/* 1. Glossy White Dome Shell */}
+      <mesh geometry={domeGeometry} material={helmetMaterial} castShadow receiveShadow />
+
+      {/* 2. Perimeter Flanged Brim */}
+      <mesh position={[0, -0.01, 0]} geometry={brimGeometry} material={helmetMaterial} castShadow />
+      {/* Front Visor Extension Peak */}
+      <mesh position={[0, -0.015, 0.28]} rotation={[-0.1, 0, 0]} geometry={frontVisorGeo} material={helmetMaterial} castShadow />
+
+      {/* 3. Central Crown Reinforcement Ridge */}
+      <mesh position={[0, 0.22, 0.02]} geometry={crownRidgeGeo} material={helmetMaterial} castShadow />
+      {/* Left and Right Side Flutes */}
+      <mesh position={[-0.14, 0.16, 0.02]} rotation={[0, 0, 0.2]} geometry={sideFluteGeo} material={helmetMaterial} />
+      <mesh position={[0.14, 0.16, 0.02]} rotation={[0, 0, -0.2]} geometry={sideFluteGeo} material={helmetMaterial} />
+
+      {/* 4. Dark Interior Suspension Base */}
+      <mesh position={[0, -0.025, 0]} geometry={harnessRingGeo} material={helmetHarnessMaterial} />
+
+      {/* 5. Blue "J" Logo on FRONT */}
+      <group position={[0, 0.11, 0.26]} rotation={[-0.38, 0, 0]}>
+        {/* Vertical Stem */}
+        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.08, 0.01)} material={helmetAccentMaterial} />
+        {/* Bottom Curve */}
+        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.07, 0.028, 0.01)} material={helmetAccentMaterial} />
+        {/* Left Up-tick */}
+        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.04, 0.01)} material={helmetAccentMaterial} />
+      </group>
+
+      {/* 6. Blue "J" Logo on RIGHT SIDE */}
+      <group position={[0.26, 0.11, 0]} rotation={[0, Math.PI / 2, -0.25]}>
+        {/* Vertical Stem */}
+        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.075, 0.01)} material={helmetAccentMaterial} />
+        {/* Bottom Curve */}
+        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.065, 0.028, 0.01)} material={helmetAccentMaterial} />
+        {/* Left Up-tick */}
+        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.038, 0.01)} material={helmetAccentMaterial} />
+      </group>
     </group>
   );
 }
 
-/** A low pallet with a few stacked concrete blocks — staged material,
- * not yet lifted up to the working floor. */
-function PalletBlocks({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  const palletGeometry = useMemo(() => new THREE.BoxGeometry(0.5, 0.045, 0.4), []);
-  const blockGeometry = useMemo(() => new THREE.BoxGeometry(0.42, 0.14, 0.32), []);
+/** Rolled Blueprint Cylinders */
+export function Blueprints({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  const paperGeo = useMemo(() => new THREE.CylinderGeometry(0.045, 0.045, 0.7, 16), []);
+  const bandGeo = useMemo(() => new THREE.CylinderGeometry(0.048, 0.048, 0.04, 16), []);
+
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
-      <mesh position={[0, 0.023, 0]} geometry={palletGeometry} material={formworkMaterial} castShadow receiveShadow />
-      <mesh position={[0, 0.115, 0]} geometry={blockGeometry} material={concreteMaterial} castShadow receiveShadow />
-      <mesh position={[0.02, 0.255, -0.01]} rotation={[0, 0.06, 0]} geometry={blockGeometry} material={concreteMaterial} castShadow receiveShadow />
+      <mesh position={[-0.06, 0.045, 0]} rotation={[Math.PI / 2, 0.12, 0]} geometry={paperGeo} material={helmetMaterial} castShadow />
+      <mesh position={[-0.06, 0.045, 0]} rotation={[Math.PI / 2, 0.12, 0]} geometry={bandGeo} material={helmetAccentMaterial} />
+
+      <mesh position={[0.06, 0.045, 0.04]} rotation={[Math.PI / 2, -0.22, 0]} geometry={paperGeo} material={helmetMaterial} castShadow />
+      <mesh position={[0.06, 0.045, 0.04]} rotation={[Math.PI / 2, -0.22, 0]} geometry={bandGeo} material={helmetAccentMaterial} />
+    </group>
+  );
+}
+
+/** Site Pallets with staged concrete materials and hollow blocks */
+function StagedConcreteBlocks({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
+  const blockGeo = useMemo(() => new THREE.BoxGeometry(0.7, 0.45, 0.55), []);
+  const holeGeo = useMemo(() => new THREE.CylinderGeometry(0.09, 0.09, 0.56, 14), []);
+
+  return (
+    <group position={position} rotation={[0, rotationY, 0]}>
+      {/* Concrete block with circular core hole */}
+      <mesh position={[0, 0.225, 0]} geometry={blockGeo} material={concreteMaterial} castShadow receiveShadow />
+      <mesh position={[0, 0.225, 0]} rotation={[Math.PI / 2, 0, 0]} geometry={holeGeo} material={steelMaterial} />
     </group>
   );
 }
@@ -153,25 +200,24 @@ export function Ground({ y }: GroundProps) {
 
   return (
     <group position={[0, y - SLAB_THICKNESS / 2, 0]}>
+      {/* Site Base Floor Slab */}
       <mesh geometry={slabGeometry} material={groundMaterial} receiveShadow />
-      {/* Procedural site grid — three.js's built-in GridHelper, no texture
-          asset needed — echoes the blueprint-grid motif used elsewhere in
-          this project's design system. */}
+
+      {/* Blueprint Grid Lines */}
       <gridHelper
-        args={[SITE_SIZE, SITE_SIZE, "#90caf9", "#c7d9f0"]}
-        position={[0, SLAB_THICKNESS / 2 + 0.003, 0]}
+        args={[SITE_SIZE, SITE_SIZE * 2, "#93c5fd", "#dbeafe"]}
+        position={[0, SLAB_THICKNESS / 2 + 0.002, 0]}
       />
-      {/* A modest, varied set of staged props scattered around the base,
-          camera-facing side — enough to read as a real site without
-          clutter, and clear of the foreground robot's spot. */}
-      <Helmet position={[-2.7, SLAB_THICKNESS / 2 + 0.17, 3.05]} rotationY={0.4} />
-      <Helmet position={[-2.35, SLAB_THICKNESS / 2 + 0.17, 2.62]} rotationY={-0.3} />
-      <CrateStack position={[-3.75, SLAB_THICKNESS / 2, 1.15]} />
-      <CableReel position={[4.05, SLAB_THICKNESS / 2 + 0.17, 1.7]} />
-      <RebarBundle position={[-3.8, SLAB_THICKNESS / 2, -0.6]} rotationY={0.5} />
-      <Barrier position={[4.15, SLAB_THICKNESS / 2, -1.7]} rotationY={-0.5} />
-      <Generator position={[-1.15, SLAB_THICKNESS / 2, 3.85]} rotationY={0.2} />
-      <PalletBlocks position={[0.75, SLAB_THICKNESS / 2, 4.05]} rotationY={-0.15} />
+
+      {/* Glowing Blueprint / AI Circuit Traces */}
+      <GlowingCircuitTraces />
+
+      {/* Precast Beams Stack on the Left */}
+      <PrecastBarrierStack position={[-4.0, SLAB_THICKNESS / 2, 1.4]} />
+
+      {/* Staged Concrete Blocks with holes */}
+      <StagedConcreteBlocks position={[3.8, SLAB_THICKNESS / 2, 0.9]} rotationY={-0.3} />
+      <StagedConcreteBlocks position={[3.2, SLAB_THICKNESS / 2, 2.6]} rotationY={0.4} />
     </group>
   );
 }

@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { craneGreyMaterial, craneYellowMaterial, counterweightMaterial, steelMaterial } from "./materials";
+import { craneGreyMaterial, craneYellowMaterial, craneBlueMaterial, counterweightMaterial, steelMaterial } from "./materials";
 
 const MAST_WIDTH = 0.3;
 const SEGMENT_HEIGHT = 1.15;
@@ -99,7 +99,7 @@ function MastLattice({ height }: { height: number }) {
           key={i}
           position={[x, height / 2, z]}
           geometry={postGeometry}
-          material={craneYellowMaterial}
+          material={craneBlueMaterial}
           castShadow
         />
       ))}
@@ -109,7 +109,7 @@ function MastLattice({ height }: { height: number }) {
           position={t.position}
           rotation={[0, t.rotationY, 0]}
           geometry={rings.geometry}
-          material={craneYellowMaterial}
+          material={craneBlueMaterial}
         />
       ))}
       {braces.items.map((b, i) => (
@@ -119,7 +119,7 @@ function MastLattice({ height }: { height: number }) {
           quaternion={b.quaternion}
           scale={[b.scaleX, 1, 1]}
           geometry={braces.geometry}
-          material={craneYellowMaterial}
+          material={craneBlueMaterial}
         />
       ))}
     </group>
@@ -230,10 +230,10 @@ export function Crane({ mastHeight, reduceMotion = false }: CraneProps) {
         <mesh position={[0, 0.32, 0]} geometry={cabGeometry} material={craneGreyMaterial} castShadow />
 
         <group position={[-JIB_LENGTH / 2, 0, 0]}>
-          <LatticeBeam length={JIB_LENGTH} material={craneYellowMaterial} />
+          <LatticeBeam length={JIB_LENGTH} material={craneBlueMaterial} />
         </group>
         <group position={[COUNTER_JIB_LENGTH / 2, 0, 0]}>
-          <LatticeBeam length={COUNTER_JIB_LENGTH} material={craneYellowMaterial} />
+          <LatticeBeam length={COUNTER_JIB_LENGTH} material={craneBlueMaterial} />
         </group>
         <mesh
           position={[COUNTER_JIB_LENGTH - 0.16, -0.1, 0]}
