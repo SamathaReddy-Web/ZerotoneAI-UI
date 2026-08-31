@@ -32,7 +32,7 @@ const CALLOUT_POSITIONS: Record<string, string> = {
   "bottom-left": "left-[2%] bottom-[12%]",
 };
 
-// Dashed connector lines from card edge to points on the building structure
+// Pointing connector lines from card edge to points on the building structure
 const CONNECTOR_LINES: Record<string, { x1: number; y1: number; x2: number; y2: number }> = {
   "top-left": { x1: 28, y1: 18, x2: 38, y2: 28 },
   "top-right": { x1: 72, y1: 22, x2: 60, y2: 24 },
@@ -66,24 +66,26 @@ function ConnectorLine({
 
   return (
     <>
+      {/* Pointing line connecting card to building point */}
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute h-0 origin-top-left border-t border-dashed border-primary-400",
+          "pointer-events-none absolute h-0 origin-top-left border-t border-dashed border-primary-500",
           !reduceMotion && "animate-connector-fade"
         )}
         style={{
           left: `${x1}%`,
           top: `${y1}%`,
-          width: `${lengthPct}%`,
-          transform: `rotate(${angleDeg}deg)`,
+          width: `${lengthPct.toFixed(2)}%`,
+          transform: `rotate(${angleDeg.toFixed(2)}deg)`,
           ...animStyle,
         }}
       />
+      {/* Glowing anchor pinpoint on the building */}
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600 shadow-[0_0_8px_rgba(21,95,212,0.6)]",
+          "pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600 shadow-[0_0_8px_rgba(21,95,212,0.75)]",
           !reduceMotion && "animate-connector-fade"
         )}
         style={{ left: `${x2}%`, top: `${y2}%`, ...animStyle }}
@@ -145,7 +147,7 @@ export function HeroVisual({
         <Scene3D reduceMotion={!!reduceMotion} />
       </div>
 
-      {/* Connector lines to building */}
+      {/* Pointing connector lines from floating cards to 3D building points */}
       {!compact &&
         callouts.map((callout, i) => (
           <ConnectorLine

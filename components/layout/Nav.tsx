@@ -26,7 +26,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
     <Link
       href={href}
       data-cursor="link"
-      className="group relative py-2 font-body text-[14.5px] font-medium text-text-secondary transition-colors hover:text-text-primary"
+      className="group relative py-2 font-body text-[16px] font-medium text-text-secondary transition-colors hover:text-text-primary"
     >
       {children}
       <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 h-[1.5px] origin-left scale-x-0 bg-primary-800 transition-transform duration-200 group-hover:scale-x-100" />
@@ -129,7 +129,7 @@ export function Nav() {
                 aria-haspopup="true"
                 onClick={handleTriggerClick}
                 onKeyDown={handleTriggerKeyDown}
-                className={`group relative flex items-center gap-1 py-2 font-body text-[14.5px] font-medium transition-colors ${
+                className={`group relative flex items-center gap-1.5 py-2 font-body text-[16px] font-medium transition-colors ${
                   isModulesActive ? "text-primary-800" : "text-text-secondary hover:text-text-primary"
                 }`}
               >

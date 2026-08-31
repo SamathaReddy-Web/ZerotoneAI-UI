@@ -25,7 +25,7 @@ export function AnimatedMetric({
   label,
   className,
   valueClassName = "font-display text-2xl font-bold tabular-nums text-text-primary",
-  labelClassName = "font-data text-[10px] uppercase tracking-wide text-text-muted",
+  labelClassName = "font-data text-[12px] uppercase tracking-wide text-text-muted font-medium",
 }: {
   value: string;
   label: string;

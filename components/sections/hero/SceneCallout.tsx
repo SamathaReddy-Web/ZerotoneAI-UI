@@ -39,13 +39,13 @@ export function SceneCallout({
         className={cn(!reduceMotion && "animate-callout-float")}
         style={reduceMotion ? undefined : { animationDelay: `${delayMs + 500}ms` }}
       >
-        <div className="flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-border bg-surface/95 px-3 py-2.5 shadow-overlay backdrop-blur-sm">
-          <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", TONE_STYLES[tone])}>
-            <span className="[&>svg]:h-4 [&>svg]:w-4">{icon}</span>
+        <div className="flex items-center gap-3 whitespace-nowrap rounded-xl border border-border bg-surface/95 px-3.5 py-3 shadow-overlay backdrop-blur-sm">
+          <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", TONE_STYLES[tone])}>
+            <span className="[&>svg]:h-4.5 [&>svg]:w-4.5">{icon}</span>
           </span>
-          <span className="flex flex-col leading-tight">
-            <span className="font-body text-[12.5px] font-semibold text-text-primary">{label}</span>
-            <span className="font-data text-[10.5px] text-text-muted">{detail}</span>
+          <span className="flex flex-col leading-snug">
+            <span className="font-body text-[14px] font-bold text-text-primary">{label}</span>
+            <span className="font-data text-[11.5px] font-medium text-text-muted">{detail}</span>
           </span>
         </div>
       </div>
