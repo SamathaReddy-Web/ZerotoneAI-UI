@@ -129,29 +129,11 @@ export function TrendingUpIcon(props: IconProps) {
   );
 }
 
-export function BarChartIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <path d="M4 20V10M11 20V4M18 20v-7" />
-    </svg>
-  );
-}
-
 export function ReceiptIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
       <path d="M6 3.5h12v17l-2.5-1.5L13 20.5 10.5 19 8 20.5 5.5 19V3.5Z" />
       <path d="M8.5 8h7M8.5 12h7M8.5 16h4" />
-    </svg>
-  );
-}
-
-export function CalendarIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
-      <path d="M3.5 9.5h17M8 3v4M16 3v4" />
-      <path d="M7.5 13.5h3M7.5 17h3M13.5 13.5h3M13.5 17h3" />
     </svg>
   );
 }
@@ -175,15 +157,6 @@ export function SwapIcon(props: IconProps) {
   );
 }
 
-export function TableIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
-      <path d="M3.5 9.5h17M9.5 9.5v10" />
-    </svg>
-  );
-}
-
 export function BankIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
@@ -195,43 +168,12 @@ export function BankIcon(props: IconProps) {
   );
 }
 
-export function PeopleIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <circle cx="9" cy="8" r="3" />
-      <path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5" />
-      <path d="M16 6.2a3 3 0 0 1 0 5.6M19 19.5c0-2.5-1.7-4.4-4-4.9" />
-    </svg>
-  );
-}
-
 export function ClipboardListIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
       <rect x="5" y="4.5" width="14" height="17" rx="2" />
       <path d="M9 4.5a3 3 0 0 1 6 0" />
       <path d="M8.5 12h7M8.5 15.5h7M8.5 18.5h4" />
-    </svg>
-  );
-}
-
-export function ChartLineIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <path d="M3.5 20.5h17" />
-      <path d="M4.5 16.5l4.5-5 3.5 3 6-7" />
-      <path d="M14.5 7.5H18v3.5" />
-    </svg>
-  );
-}
-
-export function BoxesIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <path d="M4 9.5L9 7l5 2.5-5 2.5-5-2.5Z" />
-      <path d="M4 9.5V15l5 2.5M14 9.5V15l-5 2.5" />
-      <path d="M14 9.5L19 7l-5-2.5L9 7" />
-      <path d="M19 7v5.5l-5 2.5v-5.5" />
     </svg>
   );
 }
