@@ -22,7 +22,7 @@ export function StatusChip({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 font-data text-[10.5px] font-medium uppercase tracking-wide",
+        "inline-flex items-center rounded-full px-3 py-1 font-data text-[12px] font-semibold uppercase tracking-wide",
         tones[tone],
         className
       )}

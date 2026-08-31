@@ -28,18 +28,18 @@ function FooterColumn({
   return (
     <div className="flex flex-col gap-3">
       {title ? (
-        <p className="font-data text-[11px] font-medium uppercase tracking-wider text-text-muted">
+        <p className="font-data text-[13px] font-semibold uppercase tracking-wider text-text-muted">
           {title}
         </p>
       ) : (
-        <p aria-hidden="true" className="h-[13px]" />
+        <p aria-hidden="true" className="h-[14px]" />
       )}
       <ul className="flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.slug}>
             <Link
               href={constructHref(link.slug)}
-              className="font-body text-[13.5px] text-text-secondary transition-colors hover:text-primary-800"
+              className="font-body text-[15.5px] text-text-secondary transition-colors hover:text-primary-800"
             >
               {link.label}
             </Link>
@@ -58,10 +58,10 @@ export function Footer() {
           <Link href={CONSTRUCT_BASE_PATH} className="flex items-center">
             <Logo />
           </Link>
-          <p className="max-w-[38ch] font-body text-[13.5px] leading-relaxed text-text-secondary">
+          <p className="max-w-[38ch] font-body text-[15.5px] leading-relaxed text-text-secondary">
             {BRAND_TAGLINE}
           </p>
-          <p className="max-w-[36ch] font-body text-[12.5px] leading-relaxed text-text-muted">
+          <p className="max-w-[36ch] font-body text-[14px] leading-relaxed text-text-muted">
             {CONTACT.address}
           </p>
           <div className="flex items-center gap-3 pt-1">
@@ -71,9 +71,6 @@ export function Footer() {
                 "flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors";
 
               if (social.href === null) {
-                // No real URL configured yet (content/navigation.ts). Kept
-                // visually present — not a dead "#" link — but genuinely
-                // non-interactive until a URL is filled in there.
                 return (
                   <span
                     key={social.label}
@@ -108,10 +105,10 @@ export function Footer() {
 
       <div className="border-t border-border-subtle">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-1.5 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-body text-[12.5px] text-text-muted">
+          <p className="font-body text-[14px] text-text-muted">
             © 2026 Zerotone. All rights reserved.
           </p>
-          <p className="font-body text-[12.5px] text-text-muted">
+          <p className="font-body text-[14px] text-text-muted">
             Built for builders. Made with care.
           </p>
         </div>

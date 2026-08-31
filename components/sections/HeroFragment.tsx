@@ -25,10 +25,10 @@ export function HeroFragment({ data, className }: { data: HeroFragmentData; clas
       <span aria-hidden="true" className="absolute -bottom-px -right-px h-3 w-3 border-b-[1.5px] border-r-[1.5px] border-primary-600" />
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-0.5">
-          <span className="font-data text-[11px] font-medium uppercase tracking-wide text-primary-600">
+          <span className="font-data text-[13px] font-semibold uppercase tracking-wide text-primary-600">
             {data.label}
           </span>
-          <span className="font-body text-[13px] text-text-secondary">{data.detail}</span>
+          <span className="font-body text-[15px] font-medium text-text-secondary">{data.detail}</span>
         </div>
         <StatusChip tone={data.tone} className="shrink-0">
           {data.status}

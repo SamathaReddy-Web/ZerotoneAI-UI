@@ -31,7 +31,7 @@ export function NavMegaMenu({
               className="flex flex-col gap-3 opacity-0 [animation:megamenu-in_180ms_ease-out_forwards]"
               style={{ animationDelay: `${i * 25}ms` }}
             >
-              <p className="font-data text-[10.5px] font-medium uppercase tracking-wider text-primary-600">
+              <p className="font-data text-[12px] font-semibold uppercase tracking-wider text-primary-600">
                 {category.label}
               </p>
               <ul className="flex flex-col gap-0.5">
@@ -40,7 +40,7 @@ export function NavMegaMenu({
                     <Link
                       href={constructHref(mod.slug)}
                       onClick={onLinkClick}
-                      className="group flex items-center gap-2 rounded-md py-1.5 pl-2.5 pr-2 text-[13.5px] text-text-secondary transition-colors hover:bg-primary-50 hover:text-primary-800"
+                      className="group flex items-center gap-2 rounded-md py-1.5 pl-2.5 pr-2 text-[15px] font-medium text-text-secondary transition-colors hover:bg-primary-50 hover:text-primary-800"
                     >
                       <span className="h-3 w-px shrink-0 bg-border-subtle transition-colors group-hover:bg-primary-600" />
                       {mod.label}

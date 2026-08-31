@@ -89,14 +89,14 @@ export function Hero() {
             </TextItem>
 
             <TextItem index={1} reduceMotion={reduceMotion}>
-              <h1 className="text-balance font-display text-[40px] font-bold leading-[1.05] tracking-tight text-text-primary sm:text-[52px] lg:text-[58px]">
+              <h1 className="text-balance font-display text-[46px] font-bold leading-[1.05] tracking-tight text-text-primary sm:text-[58px] lg:text-[66px]">
                 Every{" "}
                 <RotatingWord phrases={HERO.headline} accentClassName="text-primary-800" />
               </h1>
             </TextItem>
 
             <TextItem index={2} reduceMotion={reduceMotion}>
-              <p className="max-w-prose font-body text-[16px] leading-relaxed text-text-secondary sm:text-[17px]">
+              <p className="max-w-prose font-body text-[18px] leading-relaxed text-text-secondary sm:text-[19.5px]">
                 {HERO.lede}
               </p>
             </TextItem>
@@ -119,13 +119,13 @@ export function Hero() {
                 {HERO.trustInitials.map((initials) => (
                   <span
                     key={initials}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-surface bg-primary-100 font-data text-[10px] font-medium text-primary-800"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-surface bg-primary-100 font-data text-[12px] font-semibold text-primary-800"
                   >
                     {initials}
                   </span>
                 ))}
               </div>
-              <p className="font-body text-[13px] text-text-muted">{HERO.trustLine}</p>
+              <p className="font-body text-[15px] font-medium text-text-muted">{HERO.trustLine}</p>
             </TextItem>
           </motion.div>
 
@@ -147,7 +147,14 @@ export function Hero() {
             >
               <div className="grid grid-cols-3 divide-x divide-border-subtle border-t-2 border-primary-800 pt-3">
                 {HERO.dashboard.stats.map((stat) => (
-                  <AnimatedMetric key={stat.label} value={stat.value} label={stat.label} className="px-4" />
+                  <AnimatedMetric
+                    key={stat.label}
+                    value={stat.value}
+                    label={stat.label}
+                    className="px-4"
+                    valueClassName="font-display text-2xl lg:text-3xl font-bold tabular-nums text-text-primary"
+                    labelClassName="font-data text-[12px] uppercase tracking-wide text-text-muted font-medium"
+                  />
                 ))}
               </div>
             </div>
@@ -179,8 +186,8 @@ export function Hero() {
                     value={stat.value}
                     label={stat.label}
                     className="px-3"
-                    valueClassName="font-display text-xl font-bold tabular-nums text-text-primary"
-                    labelClassName="font-data text-[9.5px] uppercase tracking-wide text-text-muted"
+                    valueClassName="font-display text-2xl font-bold tabular-nums text-text-primary"
+                    labelClassName="font-data text-[11px] uppercase tracking-wide text-text-muted"
                   />
                 ))}
               </div>
