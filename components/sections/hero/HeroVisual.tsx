@@ -75,8 +75,8 @@ function ConnectorLine({
         style={{
           left: `${x1}%`,
           top: `${y1}%`,
-          width: `${lengthPct}%`,
-          transform: `rotate(${angleDeg}deg)`,
+          width: `${lengthPct.toFixed(2)}%`,
+          transform: `rotate(${angleDeg.toFixed(2)}deg)`,
           ...animStyle,
         }}
       />
