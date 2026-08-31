@@ -1,139 +1,113 @@
 "use client";
 
-import { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
 import { Building, BUILDING_FOOTPRINT, BUILDING_HEIGHT } from "./scene/Building";
-import { CameraRig } from "./scene/CameraRig";
 import { Crane } from "./scene/Crane";
-import { Ground } from "./scene/Ground";
-import { Robot } from "./scene/Robot";
-
-// Flip back to true only to re-check geometry/proportions — it swaps in the
-// flat wireframe material and a free-orbit camera for inspection.
-const DEBUG_WIREFRAME = false;
+import { Ground, Helmet, Blueprints } from "./scene/Ground";
 
 const GROUND_Y = -BUILDING_HEIGHT / 2;
 
 const [BUILDING_WIDTH, BUILDING_DEPTH] = BUILDING_FOOTPRINT;
-// Tall relative to the now-shorter, wider building — a proper tower crane
-// dominates vertically even over a compact mass, per the reference.
-const MAST_HEIGHT = BUILDING_HEIGHT * 1.42;
-// Positioned behind and slightly to the side of the building (not beside
-// it) so the mast rises from behind the mass and the jib reads as
-// swinging in over the roof, rather than the crane standing next to the
-// building as a separate object.
-const CRANE_X = -BUILDING_WIDTH * 0.08;
-const CRANE_Z = -BUILDING_DEPTH / 2 - 1.3;
+const MAST_HEIGHT = BUILDING_HEIGHT * 1.35;
+const CRANE_X = -BUILDING_WIDTH * 0.12;
+const CRANE_Z = -BUILDING_DEPTH / 2 - 1.1;
 
 interface Scene3DProps {
   reduceMotion?: boolean;
+}
+
+function AnimatedForeground({ reduceMotion }: { reduceMotion: boolean }) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!groupRef.current || reduceMotion) return;
+    const t = state.clock.elapsedTime;
+    // Gentle subtle idle float
+    groupRef.current.position.y = Math.sin(t * 1.8) * 0.03;
+    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.04 - 0.2;
+  });
+
+  return (
+    <group ref={groupRef}>
+      <Helmet position={[0, 0.12, 0]} rotationY={-0.3} />
+      <Blueprints position={[0.55, 0.05, 0.25]} rotationY={0.6} />
+    </group>
+  );
 }
 
 export function Scene3D({ reduceMotion = false }: Scene3DProps) {
   return (
     <Canvas
       shadows
-      // Capped at 1 — this scene previously ran at dpr:2 with a 2048px
-      // shadow map and a per-frame ContactShadows recompute, which was
-      // expensive enough in aggregate to trip a GPU driver TDR reset
-      // (confirmed via gl.isContextLost()) a few seconds after mount,
-      // which is why the building was disappearing. This budget (dpr 1,
-      // 1024px shadow map, ContactShadows baked once via frames={1},
-      // low-res Environment PMREM) keeps the same visual language at a
-      // fraction of the per-frame GPU cost.
-      dpr={1}
-      camera={{ position: [16.5, 8, 12.7], fov: 30 }}
-      // alpha:true + no <color attach="background"> — the clear color is
-      // transparent, so the page's own gradient wash shows straight
-      // through wherever no geometry is drawn, instead of a flat rect of
-      // canvas-background color sitting on top of it. Combined with the
-      // CSS mask on the wrapping div (see HeroVisual.tsx), this is what
-      // actually removes the "canvas is a framed box" seam — a rounded
-      // corner or a color-matched background can't fix that on their
-      // own, since the canvas is still a hard-edged rectangle underneath.
+      dpr={[1, 1.5]}
+      camera={{ position: [14.5, 7.8, 11.2], fov: 32 }}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      {/* Fog still targets the old panel color — it only tints rendered
-          geometry as it recedes (the ground plane, the crane fading into
-          the "sky"), not the empty transparent background, so this still
-          reads as atmospheric haze rather than a background swatch. */}
-      <fog attach="fog" args={["#eff6fe", 19, 34]} />
+      <fog attach="fog" args={["#eff6fe", 20, 36]} />
 
-      {/* 3-point rig, oriented relative to the camera (looking back toward
-          the origin from +x/+z) rather than world axes — a light "45°
-          left of camera" must sit on the same side as the camera or the
-          faces actually in view stay unlit. Key is warmed (golden-hour)
-          and raked across the visible +x/+z faces from upper-front-right;
-          fill is a faint cool lift from the far side; rim sits behind the
-          building (-x/-z), pushed cooler/brighter, to punch a bright edge
-          along the silhouette the camera doesn't see face-on — the warm/
-          cool split is what gives the render contrast rather than a
-          single flat wash of light. The physical site itself stays
-          neutral (warm concrete / muted yellow crane) — blue is reserved
-          for the floating AI/data layer above the canvas. */}
+      {/* Warm Golden Key Sunlight */}
       <directionalLight
-        position={[11, 14, 9]}
-        intensity={2.2}
-        color="#fff8ef"
+        position={[12, 15, 10]}
+        intensity={2.4}
+        color="#fffaf0"
         castShadow
         shadow-mapSize={[1024, 1024]}
-        shadow-bias={-0.0004}
+        shadow-bias={-0.0003}
       >
-        {/* Widened to cover the crane (now behind the building) and the
-            foreground robot, not just the building footprint. */}
         <orthographicCamera attach="shadow-camera" args={[-10, 10, 12, -12, 0.1, 45]} />
       </directionalLight>
-      <directionalLight position={[-10, 5, -3]} intensity={0.18} color="#cfe0ff" />
-      <directionalLight position={[-7, 10, -13]} intensity={0.75} color="#8fc1ff" />
-      <hemisphereLight args={["#dbe7ff", "#2c3a4c", 0.4]} />
 
-      {/* Lighting/reflections only — background stays the flat wash above
-          so the canvas keeps reading as a continuation of the page rather
-          than a visible sky dome behind the model. Low `resolution` keeps
-          the PMREM prefilter pass (a real GPU cost, done once on mount)
-          cheap — this scene doesn't need a crisp reflection, just a
-          believable ambient tint. Wrapped in its own Suspense so the HDRI
-          fetch can't block the rest of the scene from mounting. */}
+      {/* Soft Cool Sky Fill */}
+      <directionalLight position={[-10, 6, -4]} intensity={0.25} color="#dbeafe" />
+      {/* Cool Rim Light */}
+      <directionalLight position={[-6, 12, -12]} intensity={0.8} color="#93c5fd" />
+      <hemisphereLight args={["#e0f2fe", "#1e293b", 0.5]} />
+
       <Suspense fallback={null}>
-        <Environment preset="city" environmentIntensity={0.5} resolution={64} background={false} />
+        <Environment preset="city" environmentIntensity={0.6} resolution={128} background={false} />
       </Suspense>
 
-      <Building wireframe={DEBUG_WIREFRAME} />
-      <Ground y={GROUND_Y} />
-      <group position={[CRANE_X, GROUND_Y, CRANE_Z]}>
-        <Crane mastHeight={MAST_HEIGHT} reduceMotion={reduceMotion || DEBUG_WIREFRAME} />
-      </group>
-      {/* Scaled up from "true to the building" size — a robot built to
-          the same scale as the site props would read as barely more than
-          a speck at this camera distance; bumping it up is what actually
-          gives the foreground → building → crane depth hierarchy its
-          punch, matching the reference. */}
-      {!DEBUG_WIREFRAME && (
-        <group scale={2.4} position={[2.15, GROUND_Y + 0.001, 4.1]}>
-          <Robot position={[0, 0, 0]} rotationY={-0.5} />
-        </group>
-      )}
+      {/* The 3D Stepped Building */}
+      <Building />
 
-      {/* frames={1}: bake once instead of re-rendering an offscreen blur
-          pass every frame — see the dpr comment above for why this scene
-          needs to stay frugal. Nothing that meaningfully changes the
-          ground shadow moves after the first frame. */}
+      {/* The 3D Ground & Staged Site Props */}
+      <Ground y={GROUND_Y} />
+
+      {/* Blue Tower Crane */}
+      <group position={[CRANE_X, GROUND_Y, CRANE_Z]}>
+        <Crane mastHeight={MAST_HEIGHT} reduceMotion={reduceMotion} />
+      </group>
+
+      {/* Foreground Hero Helmet & Blueprints */}
+      <group scale={3.6} position={[1.1, GROUND_Y, 3.3]}>
+        <AnimatedForeground reduceMotion={reduceMotion} />
+      </group>
+
+      {/* High-quality Ground Contact Shadows */}
       <ContactShadows
         position={[0, GROUND_Y + 0.001, 0]}
-        opacity={0.42}
-        scale={13}
-        blur={2.2}
+        opacity={0.45}
+        scale={14}
+        blur={2}
         far={4}
-        color="#0d1b33"
+        color="#0f172a"
         frames={1}
       />
 
-      {DEBUG_WIREFRAME ? (
-        <OrbitControls target={[0, 1.5, 0]} />
-      ) : (
-        <CameraRig reduceMotion={reduceMotion} />
-      )}
+      {/* Interactive 3D Orbit Controls allowing full rotation */}
+      <OrbitControls
+        enableZoom={false}
+        enablePan={false}
+        autoRotate={!reduceMotion}
+        autoRotateSpeed={0.35}
+        maxPolarAngle={Math.PI / 2.05}
+        minPolarAngle={Math.PI / 5}
+        dampingFactor={0.05}
+        target={[0, 0.8, 0]}
+      />
     </Canvas>
   );
 }

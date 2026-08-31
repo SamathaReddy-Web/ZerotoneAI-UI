@@ -12,8 +12,7 @@ import { cn } from "@/lib/utils";
 import { HERO } from "@/content/home";
 import { SceneCallout } from "./SceneCallout";
 
-// The R3F canvas touches window/WebGL on mount — keep it out of the SSR
-// pass entirely rather than fighting hydration mismatches.
+// The R3F canvas touches window/WebGL on mount — keep it out of the SSR pass
 const Scene3D = dynamic(() => import("./Scene3D").then((m) => m.Scene3D), { ssr: false });
 
 const ICONS = {
@@ -24,34 +23,24 @@ const ICONS = {
   fieldLogs: FieldLogsIcon,
 } as const;
 
-// Preset anchors for the five callouts, tuned against the building's
-// actual silhouette in the 600×480 scene aspect so each card reads as
-// attached to a real part of the structure (foundation, mid-rise, crane)
-// rather than scattered at random.
+// Precision positions matching the reference design layout
 const CALLOUT_POSITIONS: Record<string, string> = {
-  "top-left": "left-[1%] top-[10%]",
-  "top-right": "right-[2%] top-[4%]",
-  "mid-right": "right-[-1%] top-[44%]",
-  "bottom-right": "right-[4%] bottom-[20%]",
-  "bottom-left": "left-[-1%] bottom-[8%]",
+  "top-left": "left-[2%] top-[8%]",
+  "top-right": "right-[4%] top-[12%]",
+  "mid-right": "right-[2%] top-[44%]",
+  "bottom-right": "right-[6%] bottom-[16%]",
+  "bottom-left": "left-[2%] bottom-[12%]",
 };
 
-// Dashed leader lines from each card's inner edge to a point on the
-// building/crane silhouette below — the detail that makes the callouts
-// read as attached to the structure rather than a scattered UI overlay.
-// Coordinates are percent-of-container, same space as CALLOUT_POSITIONS
-// above. Rendered as a rotated div (see ConnectorLine), not an <svg>.
+// Dashed connector lines from card edge to points on the building structure
 const CONNECTOR_LINES: Record<string, { x1: number; y1: number; x2: number; y2: number }> = {
-  "top-left": { x1: 29, y1: 21, x2: 39, y2: 35 },
-  "top-right": { x1: 70, y1: 15, x2: 63, y2: 24 },
-  "mid-right": { x1: 71, y1: 49, x2: 60, y2: 50 },
-  "bottom-right": { x1: 68, y1: 71, x2: 58, y2: 63 },
-  "bottom-left": { x1: 27, y1: 82, x2: 35, y2: 76 },
+  "top-left": { x1: 28, y1: 18, x2: 38, y2: 28 },
+  "top-right": { x1: 72, y1: 22, x2: 60, y2: 24 },
+  "mid-right": { x1: 74, y1: 52, x2: 64, y2: 52 },
+  "bottom-right": { x1: 67, y1: 72, x2: 56, y2: 66 },
+  "bottom-left": { x1: 27, y1: 82, x2: 44, y2: 80 },
 };
 
-// The scene's fixed aspect ratio (matches aspect-[600/480] below) — lets a
-// straight line be derived purely from percent coordinates, without ever
-// reading the container's actual rendered pixel size.
 const SCENE_ASPECT = 480 / 600;
 
 function ConnectorLine({
@@ -80,34 +69,34 @@ function ConnectorLine({
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute h-0 origin-top-left border-t border-dashed border-primary-300",
+          "pointer-events-none absolute h-0 origin-top-left border-t border-dashed border-primary-400",
           !reduceMotion && "animate-connector-fade"
         )}
-        style={{ left: `${x1}%`, top: `${y1}%`, width: `${lengthPct}%`, transform: `rotate(${angleDeg}deg)`, ...animStyle }}
+        style={{
+          left: `${x1}%`,
+          top: `${y1}%`,
+          width: `${lengthPct}%`,
+          transform: `rotate(${angleDeg}deg)`,
+          ...animStyle,
+        }}
       />
       <div
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600",
+          "pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600 shadow-[0_0_8px_rgba(21,95,212,0.6)]",
           !reduceMotion && "animate-connector-fade"
         )}
         style={{ left: `${x2}%`, top: `${y2}%`, ...animStyle }}
-      />
+      >
+        <span className="absolute -inset-1 animate-ping rounded-full bg-primary-400 opacity-60" />
+      </div>
     </>
   );
 }
 
-const CALLOUT_BASE_DELAY_MS = 1500;
-const CALLOUT_STAGGER_MS = 220;
+const CALLOUT_BASE_DELAY_MS = 1200;
+const CALLOUT_STAGGER_MS = 200;
 
-/**
- * The hero's visual anchor: a realistic 3D construction scene (half-built
- * concrete-and-steel frame + working tower crane, see scene/*) with
- * floating module callouts layered over it in HTML. Shared between the
- * desktop and mobile hero slots — `compact` just trims which callouts
- * render, since there isn't room for all five without overlap below
- * `lg`.
- */
 export function HeroVisual({
   reduceMotion,
   compact = false,
@@ -122,88 +111,68 @@ export function HeroVisual({
     : HERO.sceneCallouts;
 
   return (
-    <div className={cn("relative aspect-[600/480] w-full", className)}>
-      {/* Soft ambient glow behind the render — plane 0 of this stage,
-          gives the scene a light source to sit in rather than floating on
-          flat page background. */}
+    <div className={cn("relative aspect-[600/480] w-full select-none", className)}>
+      {/* Ambient background glow behind the 3D scene */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-16 -z-10 rounded-[3rem] bg-[radial-gradient(ellipse_58%_58%_at_50%_44%,var(--primary-100),transparent_72%)] blur-2xl"
-      />
-      {/* Out-of-focus fragments that read as the construction world
-          continuing past the frame edge — neutral/warm concrete tones
-          (not brand blue, which is reserved for the data layer), sized
-          and placed so they bleed past the canvas boundary rather than
-          sitting neatly inside it. Cheap DOM blur, not a WebGL pass. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-6 right-4 hidden h-20 w-20 rotate-12 rounded-2xl bg-neutral-300/55 blur-md sm:block"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-8 -right-10 hidden h-28 w-32 -rotate-6 rounded-3xl bg-[#b7ac97]/45 blur-lg sm:block"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-6 -left-8 hidden h-14 w-14 -rotate-6 rounded-xl bg-primary-300/45 blur-md sm:block"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-6 top-1/3 hidden h-10 w-10 rotate-3 rounded-lg bg-neutral-300/50 blur-sm sm:block"
+        className="pointer-events-none absolute -inset-12 -z-10 rounded-[3rem] bg-[radial-gradient(ellipse_65%_65%_at_50%_46%,rgba(37,99,235,0.12),transparent_75%)] blur-2xl"
       />
 
-      {/* No card chrome on this wrapper — a CSS mask fades the canvas
-          itself toward its edges (on top of the transparent WebGL
-          background set in Scene3D.tsx) so the render blends into the
-          page rather than reading as a framed rectangle with a visible
-          boundary. */}
+      {/* Floating depth-of-field blur fragments */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-6 right-6 hidden h-16 w-16 rotate-12 rounded-2xl bg-neutral-300/60 shadow-lg blur-[2.5px] border border-white/50 sm:block"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-8 -right-8 hidden h-24 w-24 -rotate-6 rounded-3xl bg-neutral-400/50 shadow-xl blur-[3.5px] border border-white/40 sm:block"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-8 -left-6 hidden h-12 w-12 -rotate-6 rounded-xl bg-primary-300/40 shadow-md blur-[2px] border border-white/40 sm:block"
+      />
+
+      {/* Real-time 3D WebGL Canvas with subtle radial edge blending */}
       <div
         className="absolute inset-0 overflow-hidden"
         style={{
           maskImage:
-            "radial-gradient(ellipse 94% 88% at 50% 46%, black 60%, transparent 100%)",
+            "radial-gradient(ellipse 95% 90% at 50% 48%, black 65%, transparent 100%)",
           WebkitMaskImage:
-            "radial-gradient(ellipse 94% 88% at 50% 46%, black 60%, transparent 100%)",
+            "radial-gradient(ellipse 95% 90% at 50% 48%, black 65%, transparent 100%)",
         }}
       >
         <Scene3D reduceMotion={!!reduceMotion} />
-        {/* Foreground depth-of-field cue, low in the frame where the
-            robot sits — a compositor-level backdrop blur, not a WebGL
-            postprocessing pass, so it can't reintroduce the per-frame
-            GPU cost that caused the earlier context-loss bug. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] backdrop-blur-[2.5px]"
-          style={{
-            maskImage: "linear-gradient(to top, black, transparent)",
-            WebkitMaskImage: "linear-gradient(to top, black, transparent)",
-          }}
-        />
       </div>
 
+      {/* Connector lines to building */}
       {!compact &&
         callouts.map((callout, i) => (
           <ConnectorLine
             key={`line-${callout.id}`}
             {...CONNECTOR_LINES[callout.corner]}
-            delayMs={CALLOUT_BASE_DELAY_MS + i * CALLOUT_STAGGER_MS + 250}
+            delayMs={CALLOUT_BASE_DELAY_MS + i * CALLOUT_STAGGER_MS + 200}
             reduceMotion={reduceMotion}
           />
         ))}
 
+      {/* Interactive Floating Module Cards — absolute positioned */}
       {callouts.map((callout, i) => {
         const Icon = ICONS[callout.icon as keyof typeof ICONS];
         return (
-          <SceneCallout
+          <div
             key={callout.id}
-            icon={<Icon />}
-            label={callout.label}
-            detail={callout.detail}
-            tone={callout.tone}
-            delayMs={CALLOUT_BASE_DELAY_MS + i * CALLOUT_STAGGER_MS}
-            reduceMotion={reduceMotion}
-            className={CALLOUT_POSITIONS[callout.corner]}
-          />
+            className={cn("absolute z-30 transition-transform duration-300 hover:scale-105", CALLOUT_POSITIONS[callout.corner])}
+          >
+            <SceneCallout
+              icon={<Icon />}
+              label={callout.label}
+              detail={callout.detail}
+              tone={callout.tone}
+              delayMs={CALLOUT_BASE_DELAY_MS + i * CALLOUT_STAGGER_MS}
+              reduceMotion={reduceMotion}
+            />
+          </div>
         );
       })}
     </div>

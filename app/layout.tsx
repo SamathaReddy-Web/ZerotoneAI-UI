@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Barlow_Semi_Condensed, Source_Sans_3, JetBrains_Mono } from "next/font/google";
-import { CustomCursor, SmoothScrollProvider } from "@/components/motion";
+import { SmoothScrollProvider } from "@/components/motion";
 import "./globals.css";
 
 const barlowSemiCondensed = Barlow_Semi_Condensed({
@@ -38,7 +38,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-background text-text-secondary">
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        <CustomCursor />
       </body>
     </html>
   );

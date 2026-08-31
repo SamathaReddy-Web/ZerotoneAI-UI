@@ -192,15 +192,7 @@ body {
   animation: connector-fade 0.6s ease-out both;
 }
 
-/* Custom cursor (CustomCursor.tsx) hides the native cursor only while
-   it's actually mounted (fine pointer, motion not reduced) — toggled as
-   a body class rather than a blanket `cursor: none` in case JS is slow
-   to hydrate. */
-body.has-custom-cursor,
-body.has-custom-cursor a,
-body.has-custom-cursor button {
-  cursor: none;
-}
+
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
