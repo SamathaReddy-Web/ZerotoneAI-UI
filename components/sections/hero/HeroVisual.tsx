@@ -128,25 +128,44 @@ export function HeroVisual({
           flat page background. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-10 -z-10 rounded-[3rem] bg-[radial-gradient(ellipse_55%_55%_at_50%_42%,var(--primary-100),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute -inset-16 -z-10 rounded-[3rem] bg-[radial-gradient(ellipse_58%_58%_at_50%_44%,var(--primary-100),transparent_72%)] blur-2xl"
       />
-      {/* Out-of-focus "bokeh" fragments — echoes the depth-of-field cubes
-          in the reference render, cheap to fake in DOM rather than adding
-          real postprocessing blur to the WebGL scene. */}
+      {/* Out-of-focus fragments that read as the construction world
+          continuing past the frame edge — neutral/warm concrete tones
+          (not brand blue, which is reserved for the data layer), sized
+          and placed so they bleed past the canvas boundary rather than
+          sitting neatly inside it. Cheap DOM blur, not a WebGL pass. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-5 right-6 hidden h-16 w-16 rotate-12 rounded-2xl bg-neutral-300/60 blur-md sm:block"
+        className="pointer-events-none absolute -top-6 right-4 hidden h-20 w-20 rotate-12 rounded-2xl bg-neutral-300/55 blur-md sm:block"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-4 -left-5 hidden h-11 w-11 -rotate-6 rounded-xl bg-primary-300/50 blur-md sm:block"
+        className="pointer-events-none absolute -bottom-8 -right-10 hidden h-28 w-32 -rotate-6 rounded-3xl bg-[#b7ac97]/45 blur-lg sm:block"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-6 -left-8 hidden h-14 w-14 -rotate-6 rounded-xl bg-primary-300/45 blur-md sm:block"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-6 top-1/3 hidden h-10 w-10 rotate-3 rounded-lg bg-neutral-300/50 blur-sm sm:block"
       />
 
-      {/* No rounded corners/border/shadow on this wrapper — the canvas
-          background is tuned to match the page wash it sits in (see
-          Scene3D.tsx), so the render is meant to bleed into the page
-          rather than sit inside a framed card. */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* No card chrome on this wrapper — a CSS mask fades the canvas
+          itself toward its edges (on top of the transparent WebGL
+          background set in Scene3D.tsx) so the render blends into the
+          page rather than reading as a framed rectangle with a visible
+          boundary. */}
+      <div
+        className="absolute inset-0 overflow-hidden"
+        style={{
+          maskImage:
+            "radial-gradient(ellipse 94% 88% at 50% 46%, black 60%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 94% 88% at 50% 46%, black 60%, transparent 100%)",
+        }}
+      >
         <Scene3D reduceMotion={!!reduceMotion} />
         {/* Foreground depth-of-field cue, low in the frame where the
             robot sits — a compositor-level backdrop blur, not a WebGL

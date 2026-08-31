@@ -21,17 +21,28 @@ const FLOOR_HEIGHT = 0.95;
 const FINISHED_FLOORS = 4;
 const COLUMN_SIZE = 0.24;
 const SLAB_THICKNESS = 0.16;
-// The building reads as "actively under construction": columns for one
-// extra story rise above the top finished slab with no floor poured yet
-// — every finished floor below is enclosed (see wall panels), so this
-// bare top level is the one clear "semi-constructed" read, matching a
-// solid concrete mass with an open, still-being-built top.
+// The building reads as "actively under construction" through a real
+// stage gradient bottom to top: fully enclosed → partially enclosed →
+// bare finished frame → exposed rebar on an unfinished top story with no
+// floor poured yet (see WALL_STAGES below for the enclosure gradient).
 const UNFINISHED_STORIES = 1;
 
 const WIDTH = BAYS_X * BAY_SIZE;
 const DEPTH = BAYS_Z * BAY_SIZE;
 const TOTAL_HEIGHT = (FINISHED_FLOORS + UNFINISHED_STORIES) * FLOOR_HEIGHT;
-const WALL_HEIGHT = FINISHED_FLOORS * FLOOR_HEIGHT;
+
+// Construction-stage progression, bottom to top — not one enclosed block
+// with a bare top, but a real gradient: fully enclosed → partially
+// enclosed → bare frame → exposed rebar. Indices are floor numbers
+// (0 = ground floor); "sides" is which of the four perimeter faces get
+// wall infill on that floor. Floors not listed here (the topmost
+// finished floor) get no walls at all — structure complete, not yet
+// clad, one step before the bare unfinished story above it.
+const WALL_STAGES: { floor: number; sides: Array<"x0" | "x1" | "z0" | "z1"> }[] = [
+  { floor: 0, sides: ["x0", "x1", "z0", "z1"] },
+  { floor: 1, sides: ["x0", "x1", "z0", "z1"] },
+  { floor: 2, sides: ["x0", "z0"] },
+];
 
 const EDGE_BEAM_HEIGHT = 0.22;
 const EDGE_BEAM_DEPTH = 0.1;
@@ -114,46 +125,43 @@ export function Building({ wireframe = false }: BuildingProps) {
     return items;
   }, [slabYPositions, beamXGeometry, beamZGeometry]);
 
-  // Perimeter wall infill on every finished floor, all four faces — the
-  // building reads as a mostly-enclosed concrete mass (per the reference)
-  // rather than an open lattice, with only the bare top story left as the
-  // "still under construction" read. The bay next to the skipped corner
-  // is left open on both faces so that access gap reads all the way up.
+  // Perimeter wall infill, staged per floor per WALL_STAGES above — a
+  // real construction-progress gradient rather than one enclosed block
+  // with a bare top. The bay next to the skipped corner is left open on
+  // both faces so that access gap reads through every enclosed floor.
   const wallGeometryX = useMemo(
-    () => new THREE.BoxGeometry(BAY_SIZE - COLUMN_SIZE * 0.4, WALL_HEIGHT, WALL_THICKNESS),
+    () => new THREE.BoxGeometry(BAY_SIZE - COLUMN_SIZE * 0.4, FLOOR_HEIGHT, WALL_THICKNESS),
     []
   );
   const wallGeometryZ = useMemo(
-    () => new THREE.BoxGeometry(WALL_THICKNESS, WALL_HEIGHT, BAY_SIZE - COLUMN_SIZE * 0.4),
+    () => new THREE.BoxGeometry(WALL_THICKNESS, FLOOR_HEIGHT, BAY_SIZE - COLUMN_SIZE * 0.4),
     []
   );
   const wallPanels = useMemo(() => {
-    const y = WALL_HEIGHT / 2;
     const items: { position: [number, number, number]; geometry: THREE.BoxGeometry }[] = [];
-    // Faces running along X (front −z and back +z edges)
-    for (let x = 0; x < BAYS_X; x++) {
-      if (!(SKIPPED_CORNER_Z === 0 && x === SKIPPED_CORNER_X - 1)) {
-        items.push({
-          position: [x * BAY_SIZE - WIDTH / 2 + BAY_SIZE / 2, y, -DEPTH / 2],
-          geometry: wallGeometryX,
-        });
+    for (const stage of WALL_STAGES) {
+      const y = stage.floor * FLOOR_HEIGHT + FLOOR_HEIGHT / 2;
+      if (stage.sides.includes("z0")) {
+        for (let x = 0; x < BAYS_X; x++) {
+          if (SKIPPED_CORNER_Z === 0 && x === SKIPPED_CORNER_X - 1) continue;
+          items.push({ position: [x * BAY_SIZE - WIDTH / 2 + BAY_SIZE / 2, y, -DEPTH / 2], geometry: wallGeometryX });
+        }
       }
-      items.push({
-        position: [x * BAY_SIZE - WIDTH / 2 + BAY_SIZE / 2, y, DEPTH / 2],
-        geometry: wallGeometryX,
-      });
-    }
-    // Faces running along Z (left −x and right +x edges)
-    for (let z = 0; z < BAYS_Z; z++) {
-      items.push({
-        position: [-WIDTH / 2, y, z * BAY_SIZE - DEPTH / 2 + BAY_SIZE / 2],
-        geometry: wallGeometryZ,
-      });
-      if (!(SKIPPED_CORNER_X === BAYS_X && z === SKIPPED_CORNER_Z)) {
-        items.push({
-          position: [WIDTH / 2, y, z * BAY_SIZE - DEPTH / 2 + BAY_SIZE / 2],
-          geometry: wallGeometryZ,
-        });
+      if (stage.sides.includes("z1")) {
+        for (let x = 0; x < BAYS_X; x++) {
+          items.push({ position: [x * BAY_SIZE - WIDTH / 2 + BAY_SIZE / 2, y, DEPTH / 2], geometry: wallGeometryX });
+        }
+      }
+      if (stage.sides.includes("x0")) {
+        for (let z = 0; z < BAYS_Z; z++) {
+          items.push({ position: [-WIDTH / 2, y, z * BAY_SIZE - DEPTH / 2 + BAY_SIZE / 2], geometry: wallGeometryZ });
+        }
+      }
+      if (stage.sides.includes("x1")) {
+        for (let z = 0; z < BAYS_Z; z++) {
+          if (SKIPPED_CORNER_X === BAYS_X && z === SKIPPED_CORNER_Z) continue;
+          items.push({ position: [WIDTH / 2, y, z * BAY_SIZE - DEPTH / 2 + BAY_SIZE / 2], geometry: wallGeometryZ });
+        }
       }
     }
     return items;

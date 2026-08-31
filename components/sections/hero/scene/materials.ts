@@ -8,45 +8,48 @@ import * as THREE from "three";
 // column, core) instead of one flat grey, so the massing reads as poured
 // concrete rather than a uniform CAD material.
 export const concreteMaterial = new THREE.MeshStandardMaterial({
-  color: "#b7b3aa",
-  roughness: 0.82,
+  color: "#c2bcac",
+  roughness: 0.8,
   metalness: 0.03,
 });
 
 export const concreteColumnMaterial = new THREE.MeshStandardMaterial({
-  color: "#9d968a",
-  roughness: 0.86,
+  color: "#948a76",
+  roughness: 0.85,
   metalness: 0.03,
 });
 
 // The core walls are cast earlier/denser than the frame around them —
-// a touch darker and less porous-looking to separate it visually.
+// noticeably darker (not just a shade off) so it reads as a distinct
+// element instead of blending into the slab/column massing.
 export const concreteCoreMaterial = new THREE.MeshStandardMaterial({
-  color: "#7c7568",
-  roughness: 0.76,
+  color: "#655c4c",
+  roughness: 0.74,
   metalness: 0.03,
 });
 
 // Scene carries a drei <Environment> (see Scene3D.tsx), so metalness can
 // sit at physically-plausible values — MeshStandardMaterial reads
 // scene.environment automatically and picks up real reflections instead
-// of relying on direct lights alone. Kept mid-grey, never nearly-black,
-// so exposed rebar/steel doesn't read as flat silhouette.
+// of relying on direct lights alone. Darkened and cooled relative to the
+// concrete tones above (not nearly-black, but a clear step down) so
+// exposed rebar/steel actually separates from the structure instead of
+// reading as the same washed-out grey.
 export const steelMaterial = new THREE.MeshStandardMaterial({
-  color: "#6b7078",
-  roughness: 0.5,
-  metalness: 0.6,
+  color: "#454b54",
+  roughness: 0.48,
+  metalness: 0.65,
   envMapIntensity: 1,
 });
 
-// Physical construction-site color stays neutral (muted safety yellow,
-// not saturated brand blue) — blue is reserved for the AI/data layer
-// (SceneCallout cards, connector lines) so the split between "the real
-// site" and "the digital layer" reads clearly.
+// Physical construction-site color stays neutral (a richer construction
+// gold, not saturated brand blue) — blue is reserved for the AI/data
+// layer (SceneCallout cards, connector lines) so the split between "the
+// real site" and "the digital layer" reads clearly.
 export const craneYellowMaterial = new THREE.MeshStandardMaterial({
-  color: "#c9a441",
-  roughness: 0.5,
-  metalness: 0.25,
+  color: "#d1a53c",
+  roughness: 0.46,
+  metalness: 0.3,
   envMapIntensity: 0.9,
 });
 
@@ -96,9 +99,11 @@ export const safetyOrangeMaterial = new THREE.MeshStandardMaterial({
   metalness: 0.05,
 });
 
+// Warm off-white, not cool grey — the reference ground reads as sunlit
+// site paving, not a neutral studio floor.
 export const groundMaterial = new THREE.MeshStandardMaterial({
-  color: "#e1e2df",
-  roughness: 1,
+  color: "#e9e3d6",
+  roughness: 0.97,
   metalness: 0,
 });
 

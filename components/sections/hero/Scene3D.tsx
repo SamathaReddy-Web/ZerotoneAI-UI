@@ -44,12 +44,21 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
       // fraction of the per-frame GPU cost.
       dpr={1}
       camera={{ position: [16.5, 8, 12.7], fov: 30 }}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      // alpha:true + no <color attach="background"> — the clear color is
+      // transparent, so the page's own gradient wash shows straight
+      // through wherever no geometry is drawn, instead of a flat rect of
+      // canvas-background color sitting on top of it. Combined with the
+      // CSS mask on the wrapping div (see HeroVisual.tsx), this is what
+      // actually removes the "canvas is a framed box" seam — a rounded
+      // corner or a color-matched background can't fix that on their
+      // own, since the canvas is still a hard-edged rectangle underneath.
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      {/* Matches --primary-50 in app/globals.css so the canvas background
-          reads as a continuation of the page, not a separate panel. */}
-      <color attach="background" args={["#eff6fe"]} />
-      <fog attach="fog" args={["#eff6fe", 20, 36]} />
+      {/* Fog still targets the old panel color — it only tints rendered
+          geometry as it recedes (the ground plane, the crane fading into
+          the "sky"), not the empty transparent background, so this still
+          reads as atmospheric haze rather than a background swatch. */}
+      <fog attach="fog" args={["#eff6fe", 19, 34]} />
 
       {/* 3-point rig, oriented relative to the camera (looking back toward
           the origin from +x/+z) rather than world axes — a light "45°
