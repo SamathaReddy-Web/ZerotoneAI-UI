@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useReducedMotion } from "motion/react";
 import {
   BankIcon,
   BuildingOfficeIcon,
@@ -20,6 +23,8 @@ import {
 import { Eyebrow } from "@/components/ui";
 import { DATA_FLOW } from "@/content/home";
 import { cn } from "@/lib/utils";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ICONS = {
   purchaseOrder: PurchaseOrderIcon,
@@ -49,8 +54,8 @@ const POSITIONS = [
   { left: 50, top: 8 },
   { left: 84, top: 12 },
   // Mid upper
-  { left: 8, top: 38 },
-  { left: 92, top: 38 },
+  { left: 8, top: 36 },
+  { left: 92, top: 36 },
   // Mid lower
   { left: 8, top: 66 },
   { left: 92, top: 66 },
@@ -59,20 +64,85 @@ const POSITIONS = [
   { left: 50, top: 92 },
   { left: 82, top: 90 },
   // Inner flanks
-  { left: 24, top: 48 },
-  { left: 76, top: 48 },
+  { left: 24, top: 50 },
+  { left: 76, top: 50 },
 ];
 
 export function DataFlow() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  const filteredItems = DATA_FLOW.items.filter((item) =>
-    activeCategory === "all" ? true : item.category === activeCategory
-  );
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const coreRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const isDesktop = window.matchMedia("(min-width: 640px)").matches;
+    if (reduceMotion || !isDesktop || !sectionRef.current || !stageRef.current || !coreRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=120%",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        },
+      });
+
+      // 1. Zoom and scale up the central Zerotone core
+      tl.to(
+        coreRef.current,
+        {
+          scale: 2.7,
+          filter: "drop-shadow(0 20px 40px rgba(13,71,161,0.28))",
+          ease: "power2.inOut",
+        },
+        0
+      );
+
+      // 2. Fade & shrink the SVG data conduits into the center
+      if (svgRef.current) {
+        tl.to(
+          svgRef.current,
+          {
+            opacity: 0,
+            scale: 0.2,
+            transformOrigin: "50% 50%",
+            ease: "power2.in",
+          },
+          0
+        );
+      }
+
+      // 3. Move all document cards smoothly into the center and merge/fade out
+      DATA_FLOW.items.forEach((item) => {
+        const el = cardRefs.current[item.id];
+        if (!el) return;
+        tl.to(
+          el,
+          {
+            left: "50%",
+            top: "50%",
+            scale: 0.08,
+            opacity: 0,
+            ease: "power2.inOut",
+          },
+          0
+        );
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [reduceMotion]);
 
   return (
-    <section className="relative overflow-hidden border-b border-border-subtle bg-background py-20 sm:py-28">
+    <section ref={sectionRef} className="relative overflow-hidden border-b border-border-subtle bg-background py-16 sm:py-24">
       {/* Background Architectural Ambient Glow */}
       <div
         aria-hidden="true"
@@ -96,16 +166,16 @@ export function DataFlow() {
         {/* Section Header */}
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
           <Eyebrow>{DATA_FLOW.eyebrow}</Eyebrow>
-          <h2 className="mt-4 text-balance font-display text-[32px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px]">
+          <h2 className="mt-3.5 text-balance font-display text-[32px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px]">
             {DATA_FLOW.heading}
           </h2>
-          <p className="mt-4 max-w-2xl text-balance font-body text-[17px] leading-relaxed text-text-secondary">
+          <p className="mt-3 max-w-2xl text-balance font-body text-[17px] leading-relaxed text-text-secondary">
             {DATA_FLOW.sub}
           </p>
         </div>
 
         {/* Interactive Category Filter Tabs */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-surface/90 p-1.5 shadow-raised backdrop-blur-md">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-surface/90 p-1.5 shadow-raised backdrop-blur-md">
           {DATA_FLOW.categories.map((cat) => {
             const Icon = ICONS[cat.icon as keyof typeof ICONS] || SparklesIcon;
             const isActive = activeCategory === cat.id;
@@ -129,12 +199,13 @@ export function DataFlow() {
           })}
         </div>
 
-        {/* The Central Command Operating Hub */}
-        <div className="relative mt-12 w-full max-w-5xl">
-          <div className="relative h-[620px] w-full rounded-2xl border border-border/80 bg-gradient-to-b from-surface/95 via-surface/80 to-surface/95 p-6 shadow-overlay backdrop-blur-md">
+        {/* The Central Command Operating Hub (Pinned & Scrubbed on Scroll) */}
+        <div ref={stageRef} className="relative mt-8 w-full max-w-5xl">
+          <div className="relative h-[600px] w-full rounded-2xl border border-border/80 bg-gradient-to-b from-surface/95 via-surface/80 to-surface/95 p-6 shadow-overlay backdrop-blur-md overflow-hidden">
             {/* Dynamic SVG Connection Beams */}
             <svg
-              className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+              ref={svgRef}
+              className="pointer-events-none absolute inset-0 h-full w-full overflow-visible transition-transform duration-300"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
             >
@@ -155,7 +226,6 @@ export function DataFlow() {
                 const isSelected = activeCategory === "all" || item.category === activeCategory;
                 const isHovered = hoveredItem === item.id;
 
-                // Center is at 50, 50
                 const pathData = `M ${pos.left} ${pos.top} Q ${(pos.left + 50) / 2} ${(pos.top + 50) / 2 + (pos.top < 50 ? -3 : 3)}, 50 50`;
 
                 return (
@@ -166,12 +236,10 @@ export function DataFlow() {
                       stroke={isSelected ? (isHovered ? "url(#beamGradientActive)" : "#90caf9") : "url(#beamGradientMuted)"}
                       strokeWidth={isHovered ? 0.75 : isSelected ? 0.45 : 0.25}
                       strokeDasharray={isSelected ? "1.5, 1.5" : "1, 2"}
-                      className={isSelected ? "animate-[dash_20s_linear_infinite]" : ""}
                     />
-                    {/* Glowing energy packet moving along active line */}
                     {isSelected && (
                       <circle r={isHovered ? "0.9" : "0.55"} fill="#0d47a1">
-                        <animateMotion path={pathData} dur={`${3.5 + (idx % 3)}s`} repeatCount="indefinite" />
+                        <animateMotion path={pathData} dur={`${3.2 + (idx % 3)}s`} repeatCount="indefinite" />
                       </circle>
                     )}
                   </g>
@@ -179,8 +247,11 @@ export function DataFlow() {
               })}
             </svg>
 
-            {/* Central Zerotone Operating Engine Node */}
-            <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+            {/* Central Zerotone Operating Engine Node (Scales up and absorbs on scroll) */}
+            <div
+              ref={coreRef}
+              className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center origin-center"
+            >
               {/* Concentric Animated Radar Wave Rings */}
               <div className="relative flex h-36 w-36 items-center justify-center">
                 <span className="absolute inset-0 animate-ping rounded-full border border-primary-300 opacity-25 duration-1000" />
@@ -210,7 +281,7 @@ export function DataFlow() {
               </div>
             </div>
 
-            {/* Orbiting Live Document & Signal Cards */}
+            {/* Orbiting Live Document & Signal Cards (Converge into center on scroll) */}
             {DATA_FLOW.items.map((item, idx) => {
               const Icon = ICONS[item.icon as keyof typeof ICONS] || DocumentIcon;
               const pos = POSITIONS[idx % POSITIONS.length];
@@ -220,11 +291,14 @@ export function DataFlow() {
               return (
                 <div
                   key={item.id}
+                  ref={(el) => {
+                    cardRefs.current[item.id] = el;
+                  }}
                   onMouseEnter={() => setHoveredItem(item.id)}
                   onMouseLeave={() => setHoveredItem(null)}
                   className={cn(
-                    "group absolute z-30 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300",
-                    isSelected ? "opacity-100 scale-100" : "opacity-35 scale-95 hover:opacity-80"
+                    "group absolute z-30 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-opacity duration-300",
+                    isSelected ? "opacity-100" : "opacity-35 hover:opacity-80"
                   )}
                   style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
                 >
@@ -280,7 +354,7 @@ export function DataFlow() {
         </div>
 
         {/* Live System Telemetry Strip */}
-        <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-10 grid w-full max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
           {DATA_FLOW.stats.map((stat) => (
             <div
               key={stat.label}
