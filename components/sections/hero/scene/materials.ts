@@ -4,35 +4,100 @@
 // fresh GPU resource.
 import * as THREE from "three";
 
+// Warm, slightly-varied concrete tones — three distinct surfaces (slab,
+// column, core) instead of one flat grey, so the massing reads as poured
+// concrete rather than a uniform CAD material.
 export const concreteMaterial = new THREE.MeshStandardMaterial({
-  color: "#c9c7c1",
-  roughness: 0.92,
-  metalness: 0.02,
+  color: "#b7b3aa",
+  roughness: 0.82,
+  metalness: 0.03,
 });
 
-// Metalness kept moderate (not near 1) because the scene has no
-// environment map — very metallic MeshStandardMaterial surfaces rely on
-// reflections to read as anything but flat black under direct lights alone.
+export const concreteColumnMaterial = new THREE.MeshStandardMaterial({
+  color: "#9d968a",
+  roughness: 0.86,
+  metalness: 0.03,
+});
+
+// The core walls are cast earlier/denser than the frame around them —
+// a touch darker and less porous-looking to separate it visually.
+export const concreteCoreMaterial = new THREE.MeshStandardMaterial({
+  color: "#7c7568",
+  roughness: 0.76,
+  metalness: 0.03,
+});
+
+// Scene carries a drei <Environment> (see Scene3D.tsx), so metalness can
+// sit at physically-plausible values — MeshStandardMaterial reads
+// scene.environment automatically and picks up real reflections instead
+// of relying on direct lights alone. Kept mid-grey, never nearly-black,
+// so exposed rebar/steel doesn't read as flat silhouette.
 export const steelMaterial = new THREE.MeshStandardMaterial({
-  color: "#5a6b7d",
-  roughness: 0.55,
-  metalness: 0.35,
+  color: "#6b7078",
+  roughness: 0.5,
+  metalness: 0.6,
+  envMapIntensity: 1,
 });
 
-export const craneBlueMaterial = new THREE.MeshStandardMaterial({
-  color: "#0d47a1",
+// Physical construction-site color stays neutral (muted safety yellow,
+// not saturated brand blue) — blue is reserved for the AI/data layer
+// (SceneCallout cards, connector lines) so the split between "the real
+// site" and "the digital layer" reads clearly.
+export const craneYellowMaterial = new THREE.MeshStandardMaterial({
+  color: "#c9a441",
+  roughness: 0.5,
+  metalness: 0.25,
+  envMapIntensity: 0.9,
+});
+
+export const craneGreyMaterial = new THREE.MeshStandardMaterial({
+  color: "#565c66",
   roughness: 0.45,
-  metalness: 0.3,
+  metalness: 0.5,
+  envMapIntensity: 1,
 });
 
+// Precast counterweight blocks — concrete, not steel.
+export const counterweightMaterial = new THREE.MeshStandardMaterial({
+  color: "#8a8880",
+  roughness: 0.8,
+  metalness: 0.05,
+});
+
+// Off-white hardhat shell — the Zerotone mark is a separate small accent
+// mesh (see Ground.tsx) rather than a texture/decal, so it never depends
+// on a font or image asset loading.
 export const helmetMaterial = new THREE.MeshStandardMaterial({
-  color: "#f5b400",
-  roughness: 0.55,
+  color: "#f4f3ef",
+  roughness: 0.35,
+  metalness: 0.05,
+  envMapIntensity: 0.9,
+});
+
+export const helmetAccentMaterial = new THREE.MeshStandardMaterial({
+  color: "#155fd4",
+  roughness: 0.3,
+  metalness: 0.2,
+  envMapIntensity: 1,
+});
+
+// Temporary plywood formwork panels on the actively-under-construction
+// top floor — warm tan, matte.
+export const formworkMaterial = new THREE.MeshStandardMaterial({
+  color: "#ad9670",
+  roughness: 0.88,
+  metalness: 0.01,
+});
+
+// Site-safety orange — barriers, cable reel.
+export const safetyOrangeMaterial = new THREE.MeshStandardMaterial({
+  color: "#c1602b",
+  roughness: 0.6,
   metalness: 0.05,
 });
 
 export const groundMaterial = new THREE.MeshStandardMaterial({
-  color: "#dfe3e8",
+  color: "#e1e2df",
   roughness: 1,
   metalness: 0,
 });

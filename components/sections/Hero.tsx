@@ -1,25 +1,13 @@
 "use client";
 
-import { type PointerEvent, useEffect, useRef, useState } from "react";
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "motion/react";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { AnimatedMetric, MagneticButton } from "@/components/motion";
 import { Button, Eyebrow } from "@/components/ui";
-import { useFinePointer } from "@/lib/use-fine-pointer";
 import { EASE_OUT } from "@/lib/motion";
 import { HeroFragment } from "./HeroFragment";
-import { ArchitecturalDrawing } from "./hero/ArchitecturalDrawing";
-import { DataAnnotationLabel } from "./hero/DataAnnotationLabel";
+import { HeroVisual } from "./hero/HeroVisual";
 import { RotatingWord } from "./hero/RotatingWord";
-import { ZoneTooltip } from "./hero/ZoneTooltip";
-import { ANNOTATION_POINTS } from "./hero/drawing-data";
 import { HERO } from "@/content/home";
 
 const TEXT_STAGGER = 0.09;
@@ -57,52 +45,19 @@ function TextItem({
 export function Hero() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
-  const finePointer = useFinePointer();
-  const [hoveredZone, setHoveredZone] = useState<string | null>(null);
 
-  // Scroll-linked depth parallax — the drawing (further back) moves more
-  // than the text (closer to camera) as the hero scrolls past.
+  // Scroll-linked depth parallax — the 3D scene (further back) moves more
+  // than the text (closer to camera) as the hero scrolls past. Pointer
+  // parallax for the scene itself now lives inside the WebGL canvas (see
+  // CameraRig.tsx) — a real camera move, not a CSS tilt on top of an
+  // already-3D render.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const drawingScrollY = useTransform(scrollYProgress, [0, 1], [0, 46]);
+  const sceneScrollY = useTransform(scrollYProgress, [0, 1], [0, 46]);
   const textScrollY = useTransform(scrollYProgress, [0, 1], [0, 14]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 1, 0]);
-
-  // Perspective "camera": a one-time descend from a steeper angle to its
-  // resting tilt on load, plus a continuous small pointer-driven offset —
-  // both are plain motion values driving one element's style directly
-  // (no initial/animate props, no variants), which is the pattern proven
-  // reliable in this project; combined via useTransform.
-  const baseTiltX = useMotionValue(9);
-  const pointerTiltX = useMotionValue(0);
-  const pointerTiltY = useMotionValue(0);
-  const springPointerTiltX = useSpring(pointerTiltX, { stiffness: 60, damping: 20 });
-  const springPointerTiltY = useSpring(pointerTiltY, { stiffness: 60, damping: 20 });
-  const stageRotateX = useTransform(
-    [baseTiltX, springPointerTiltX],
-    ([base, pointer]: number[]) => base + pointer
-  );
-
-  useEffect(() => {
-    if (reduceMotion) {
-      baseTiltX.set(3);
-      return;
-    }
-    const controls = animate(baseTiltX, 3, { duration: 1.1, ease: EASE_OUT });
-    return () => controls.stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduceMotion]);
-
-  function handlePointerMove(e: PointerEvent<HTMLElement>) {
-    if (!finePointer || reduceMotion) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const relX = (e.clientX - rect.left) / rect.width - 0.5;
-    const relY = (e.clientY - rect.top) / rect.height - 0.5;
-    pointerTiltY.set(relX * 5);
-    pointerTiltX.set(relY * -3);
-  }
 
   const scrollDisabled = !!reduceMotion;
 
@@ -174,52 +129,18 @@ export function Hero() {
             </TextItem>
           </motion.div>
 
-          {/* Visual column — the architectural elevation, staged with real
-              perspective. Desktop/laptop only; the mobile version further
-              down is a separately-composed simplified band, not a hidden
-              copy of this one. */}
-          <div
-            className="relative z-0 mt-14 hidden lg:mt-0 lg:block"
-            style={{ perspective: "1200px" }}
-          >
-            <motion.div
-              style={{
-                rotateX: scrollDisabled ? 3 : stageRotateX,
-                rotateY: scrollDisabled ? 0 : springPointerTiltY,
-                y: scrollDisabled ? 0 : drawingScrollY,
-                transformStyle: "preserve-3d",
-              }}
-              onPointerMove={handlePointerMove}
-              className="relative aspect-[600/480] w-full"
-            >
-              <ArchitecturalDrawing
-                className="absolute inset-0 h-full w-full drop-shadow-[0_1px_1px_rgba(26,34,51,0.04)]"
-                triggerRef={sectionRef}
-                onZoneHover={setHoveredZone}
-              />
-
-              {HERO.dashboard.rows.map((row, i) => {
-                const point = ANNOTATION_POINTS[i];
-                const delayMs = reduceMotion ? 0 : (1.9 + i * 0.18) * 1000 + 150;
-                return (
-                  <DataAnnotationLabel
-                    key={row.label}
-                    data={row}
-                    x={point.label.x}
-                    y={point.label.y}
-                    side={point.side}
-                    delayMs={delayMs}
-                    depthPx={28}
-                  />
-                );
-              })}
-
-              <ZoneTooltip hoveredZone={hoveredZone} />
+          {/* Visual column — the realistic 3D construction scene (see
+              HeroVisual.tsx). Desktop/laptop only; the mobile version
+              further down is a separately-composed compact instance, not
+              a hidden copy of this one. */}
+          <div className="relative z-0 mt-14 hidden lg:mt-0 lg:block">
+            <motion.div style={{ y: scrollDisabled ? 0 : sceneScrollY }}>
+              <HeroVisual reduceMotion={reduceMotion} />
             </motion.div>
 
-            {/* Resolved summary strip — sits below the drawing as its data
+            {/* Resolved summary strip — sits below the scene as its data
                 footer, single top rule rather than card chrome, so it
-                reads as a continuation of the technical document. */}
+                reads as a continuation of the project dashboard. */}
             <div
               className={reduceMotion ? "mt-6" : "mt-6 animate-fade-in-up"}
               style={reduceMotion ? undefined : { animationDelay: "2.55s" }}
@@ -233,14 +154,14 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Mobile/tablet — the same drawing, recomposed as a simplified
-            top band (grid/dimensions/title-block/leader-lines drop out
-            via the drawing's own responsive classes), not removed. Data
-            reads as a stacked list beneath it for legibility at this
-            width, with each row keeping its fragment styling. */}
+        {/* Mobile/tablet — the same 3D scene, recomposed as a compact top
+            band (fewer callouts, via HeroVisual's `compact` prop) rather
+            than a hidden copy of the desktop one. Data reads as a stacked
+            list beneath it for legibility at this width, with each row
+            keeping its fragment styling. */}
         <div className="mt-10 lg:hidden">
           <TextItem index={0} reduceMotion={reduceMotion} className="mb-6">
-            <ArchitecturalDrawing className="h-56 w-full sm:h-64" />
+            <HeroVisual reduceMotion={reduceMotion} compact className="h-56 sm:h-64" />
           </TextItem>
 
           <div className="flex flex-col gap-2.5">

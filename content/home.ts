@@ -31,4 +31,14 @@ export const HERO = {
       { label: "RFI 023", detail: "Wall opening dimension", tone: "warning" as StatusTone, status: "Open 2 days" },
     ],
   },
+  // Floating callouts over the hero's 3D construction scene — each ties to
+  // a real Zerotone module, not a generic label. `corner` picks a preset
+  // anchor position (see CALLOUT_POSITIONS in HeroVisual.tsx).
+  sceneCallouts: [
+    { id: "blueprint", icon: "blueprint", label: "Blueprint AI", detail: "12 specs parsed", tone: "primary" as const, corner: "top-left" as const },
+    { id: "po", icon: "purchaseOrder", label: "Purchase Orders", detail: "Auto-matched", tone: "primary" as const, corner: "top-right" as const },
+    { id: "cost", icon: "costControl", label: "Cost Control", detail: "↓ 4.2% savings", tone: "success" as const, corner: "mid-right" as const },
+    { id: "path", icon: "criticalPath", label: "AI Critical Path", detail: "Zero delays", tone: "primary" as const, corner: "bottom-right" as const },
+    { id: "field", icon: "fieldLogs", label: "Field Logs", detail: "Synced in real-time", tone: "primary" as const, corner: "bottom-left" as const },
+  ],
 };

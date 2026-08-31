@@ -67,3 +67,54 @@ export function FacebookIcon(props: IconProps) {
     </svg>
   );
 }
+
+// Hero scene callout icons — 24x24, stroke-based to match the set above.
+export function BlueprintIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5 3.5h9l5 5V20.5H5z" />
+      <path d="M14 3.5V8.5h5" />
+      <path d="M8 13h8M8 16.5h5" />
+      <circle cx="16.5" cy="16.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function PurchaseOrderIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M7 3.5h10l1 4H6l1-4Z" />
+      <path d="M6 7.5h12l-.9 11.2a1.5 1.5 0 0 1-1.5 1.3H8.4a1.5 1.5 0 0 1-1.5-1.3L6 7.5Z" />
+      <path d="M9.5 11.5l2 2 3.5-3.5" />
+    </svg>
+  );
+}
+
+export function CostControlIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3.5 8.5L10 15l3.5-3.5 7 7" />
+      <path d="M15.5 18.5h5v-5" />
+    </svg>
+  );
+}
+
+export function CriticalPathIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <circle cx="5" cy="6" r="2" />
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="12" r="2" />
+      <path d="M7 6h6a4 4 0 0 1 4 4v0M7 18h6a4 4 0 0 0 4-4v0" />
+    </svg>
+  );
+}
+
+export function FieldLogsIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+      <path d="M8 10l2.5 2.5L8 15M13 15h3" />
+    </svg>
+  );
+}
