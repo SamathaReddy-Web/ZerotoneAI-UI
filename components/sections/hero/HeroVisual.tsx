@@ -142,8 +142,24 @@ export function HeroVisual({
         className="pointer-events-none absolute bottom-4 -left-5 hidden h-11 w-11 -rotate-6 rounded-xl bg-primary-300/50 blur-md sm:block"
       />
 
-      <div className="absolute inset-0 overflow-hidden rounded-2xl">
+      {/* No rounded corners/border/shadow on this wrapper — the canvas
+          background is tuned to match the page wash it sits in (see
+          Scene3D.tsx), so the render is meant to bleed into the page
+          rather than sit inside a framed card. */}
+      <div className="absolute inset-0 overflow-hidden">
         <Scene3D reduceMotion={!!reduceMotion} />
+        {/* Foreground depth-of-field cue, low in the frame where the
+            robot sits — a compositor-level backdrop blur, not a WebGL
+            postprocessing pass, so it can't reintroduce the per-frame
+            GPU cost that caused the earlier context-loss bug. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] backdrop-blur-[2.5px]"
+          style={{
+            maskImage: "linear-gradient(to top, black, transparent)",
+            WebkitMaskImage: "linear-gradient(to top, black, transparent)",
+          }}
+        />
       </div>
 
       {!compact &&

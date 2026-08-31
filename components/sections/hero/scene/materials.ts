@@ -102,6 +102,23 @@ export const groundMaterial = new THREE.MeshStandardMaterial({
   metalness: 0,
 });
 
+// Foreground robot — glossy off-white shell (a shade brighter/glossier
+// than the matte helmet) and a dark undercarriage, so it reads as a
+// small piece of hardware rather than another construction material.
+export const robotShellMaterial = new THREE.MeshStandardMaterial({
+  color: "#f3f2ee",
+  roughness: 0.25,
+  metalness: 0.1,
+  envMapIntensity: 1.1,
+});
+
+export const robotBaseMaterial = new THREE.MeshStandardMaterial({
+  color: "#2c3038",
+  roughness: 0.4,
+  metalness: 0.35,
+  envMapIntensity: 1,
+});
+
 // Debug-only: applied instead of the materials above while a piece of
 // geometry is still being blocked out, so proportions can be reviewed
 // before PBR/lighting are wired in.

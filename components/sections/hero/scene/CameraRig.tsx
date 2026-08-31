@@ -4,8 +4,8 @@ import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const BASE_POSITION = new THREE.Vector3(15.5, 6.9, 10.7);
-const LOOK_TARGET = new THREE.Vector3(0, 1.3, 0);
+const BASE_POSITION = new THREE.Vector3(16.5, 8, 12.7);
+const LOOK_TARGET = new THREE.Vector3(0, 1.5, 0);
 const DAMP_LAMBDA = 3.2;
 
 interface CameraRigProps {

@@ -7,6 +7,7 @@ import { Building, BUILDING_FOOTPRINT, BUILDING_HEIGHT } from "./scene/Building"
 import { CameraRig } from "./scene/CameraRig";
 import { Crane } from "./scene/Crane";
 import { Ground } from "./scene/Ground";
+import { Robot } from "./scene/Robot";
 
 // Flip back to true only to re-check geometry/proportions — it swaps in the
 // flat wireframe material and a free-orbit camera for inspection.
@@ -14,9 +15,16 @@ const DEBUG_WIREFRAME = false;
 
 const GROUND_Y = -BUILDING_HEIGHT / 2;
 
-const [BUILDING_WIDTH] = BUILDING_FOOTPRINT;
-const MAST_HEIGHT = BUILDING_HEIGHT * 1.16;
-const MAST_X = BUILDING_WIDTH / 2 + 1.35;
+const [BUILDING_WIDTH, BUILDING_DEPTH] = BUILDING_FOOTPRINT;
+// Tall relative to the now-shorter, wider building — a proper tower crane
+// dominates vertically even over a compact mass, per the reference.
+const MAST_HEIGHT = BUILDING_HEIGHT * 1.42;
+// Positioned behind and slightly to the side of the building (not beside
+// it) so the mast rises from behind the mass and the jib reads as
+// swinging in over the roof, rather than the crane standing next to the
+// building as a separate object.
+const CRANE_X = -BUILDING_WIDTH * 0.08;
+const CRANE_Z = -BUILDING_DEPTH / 2 - 1.3;
 
 interface Scene3DProps {
   reduceMotion?: boolean;
@@ -35,7 +43,7 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
       // low-res Environment PMREM) keeps the same visual language at a
       // fraction of the per-frame GPU cost.
       dpr={1}
-      camera={{ position: [15.5, 6.9, 10.7], fov: 28 }}
+      camera={{ position: [16.5, 8, 12.7], fov: 30 }}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
       {/* Matches --primary-50 in app/globals.css so the canvas background
@@ -63,9 +71,9 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.0004}
       >
-        {/* Widened to cover the crane's mast offset and extra height, not
-            just the building footprint. */}
-        <orthographicCamera attach="shadow-camera" args={[-9, 9, 11, -11, 0.1, 40]} />
+        {/* Widened to cover the crane (now behind the building) and the
+            foreground robot, not just the building footprint. */}
+        <orthographicCamera attach="shadow-camera" args={[-10, 10, 12, -12, 0.1, 45]} />
       </directionalLight>
       <directionalLight position={[-10, 5, -3]} intensity={0.18} color="#cfe0ff" />
       <directionalLight position={[-7, 10, -13]} intensity={0.75} color="#8fc1ff" />
@@ -84,9 +92,19 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
 
       <Building wireframe={DEBUG_WIREFRAME} />
       <Ground y={GROUND_Y} />
-      <group position={[MAST_X, GROUND_Y, 0]}>
+      <group position={[CRANE_X, GROUND_Y, CRANE_Z]}>
         <Crane mastHeight={MAST_HEIGHT} reduceMotion={reduceMotion || DEBUG_WIREFRAME} />
       </group>
+      {/* Scaled up from "true to the building" size — a robot built to
+          the same scale as the site props would read as barely more than
+          a speck at this camera distance; bumping it up is what actually
+          gives the foreground → building → crane depth hierarchy its
+          punch, matching the reference. */}
+      {!DEBUG_WIREFRAME && (
+        <group scale={2.4} position={[2.15, GROUND_Y + 0.001, 4.1]}>
+          <Robot position={[0, 0, 0]} rotationY={-0.5} />
+        </group>
+      )}
 
       {/* frames={1}: bake once instead of re-rendering an offscreen blur
           pass every frame — see the dpr comment above for why this scene
@@ -103,7 +121,7 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
       />
 
       {DEBUG_WIREFRAME ? (
-        <OrbitControls target={[0, 1.2, 0]} />
+        <OrbitControls target={[0, 1.5, 0]} />
       ) : (
         <CameraRig reduceMotion={reduceMotion} />
       )}
