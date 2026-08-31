@@ -152,15 +152,6 @@ export function DataFlow() {
             "radial-gradient(ellipse 900px 520px at 50% 30%, rgba(227, 242, 254, 0.7), transparent 75%)",
         }}
       />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#082c61 1px, transparent 1px), linear-gradient(90deg, #082c61 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
 
       <div className="relative mx-auto flex w-full max-w-7xl flex-col items-center px-6">
         {/* Section Header */}
@@ -234,8 +225,7 @@ export function DataFlow() {
                       d={pathData}
                       fill="none"
                       stroke={isSelected ? (isHovered ? "url(#beamGradientActive)" : "#90caf9") : "url(#beamGradientMuted)"}
-                      strokeWidth={isHovered ? 0.75 : isSelected ? 0.45 : 0.25}
-                      strokeDasharray={isSelected ? "1.5, 1.5" : "1, 2"}
+                      strokeWidth={isHovered ? 0.85 : isSelected ? 0.5 : 0.25}
                     />
                     {isSelected && (
                       <circle r={isHovered ? "0.9" : "0.55"} fill="#0d47a1">

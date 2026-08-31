@@ -32,68 +32,6 @@ const CALLOUT_POSITIONS: Record<string, string> = {
   "bottom-left": "left-[2%] bottom-[12%]",
 };
 
-// Dashed connector lines from card edge to points on the building structure
-const CONNECTOR_LINES: Record<string, { x1: number; y1: number; x2: number; y2: number }> = {
-  "top-left": { x1: 28, y1: 18, x2: 38, y2: 28 },
-  "top-right": { x1: 72, y1: 22, x2: 60, y2: 24 },
-  "mid-right": { x1: 74, y1: 52, x2: 64, y2: 52 },
-  "bottom-right": { x1: 67, y1: 72, x2: 56, y2: 66 },
-  "bottom-left": { x1: 27, y1: 82, x2: 44, y2: 80 },
-};
-
-const SCENE_ASPECT = 480 / 600;
-
-function ConnectorLine({
-  x1,
-  y1,
-  x2,
-  y2,
-  delayMs,
-  reduceMotion,
-}: {
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  delayMs: number;
-  reduceMotion?: boolean | null;
-}) {
-  const dxPct = x2 - x1;
-  const dyPct = (y2 - y1) * SCENE_ASPECT;
-  const lengthPct = Math.sqrt(dxPct * dxPct + dyPct * dyPct);
-  const angleDeg = (Math.atan2(dyPct, dxPct) * 180) / Math.PI;
-  const animStyle = reduceMotion ? undefined : { animationDelay: `${delayMs}ms` };
-
-  return (
-    <>
-      <div
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute h-0 origin-top-left border-t border-dashed border-primary-400",
-          !reduceMotion && "animate-connector-fade"
-        )}
-        style={{
-          left: `${x1}%`,
-          top: `${y1}%`,
-          width: `${lengthPct.toFixed(2)}%`,
-          transform: `rotate(${angleDeg.toFixed(2)}deg)`,
-          ...animStyle,
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-600 shadow-[0_0_8px_rgba(21,95,212,0.6)]",
-          !reduceMotion && "animate-connector-fade"
-        )}
-        style={{ left: `${x2}%`, top: `${y2}%`, ...animStyle }}
-      >
-        <span className="absolute -inset-1 animate-ping rounded-full bg-primary-400 opacity-60" />
-      </div>
-    </>
-  );
-}
-
 const CALLOUT_BASE_DELAY_MS = 1200;
 const CALLOUT_STAGGER_MS = 200;
 
@@ -144,17 +82,6 @@ export function HeroVisual({
       >
         <Scene3D reduceMotion={!!reduceMotion} />
       </div>
-
-      {/* Connector lines to building */}
-      {!compact &&
-        callouts.map((callout, i) => (
-          <ConnectorLine
-            key={`line-${callout.id}`}
-            {...CONNECTOR_LINES[callout.corner]}
-            delayMs={CALLOUT_BASE_DELAY_MS + i * CALLOUT_STAGGER_MS + 200}
-            reduceMotion={reduceMotion}
-          />
-        ))}
 
       {/* Interactive Floating Module Cards — absolute positioned */}
       {callouts.map((callout, i) => {
