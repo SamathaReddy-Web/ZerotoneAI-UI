@@ -69,7 +69,6 @@ const POSITIONS = [
 ];
 
 export function DataFlow() {
-  const [activeCategory, setActiveCategory] = useState<string>("all");
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -94,18 +93,18 @@ export function DataFlow() {
         },
       });
 
-      // 1. Gently scale the central Zerotone core
+      // 1. Gently scale the central Zerotone core on top of cards
       tl.to(
         coreRef.current,
         {
           scale: 1.45,
-          filter: "drop-shadow(0 16px 32px rgba(13,71,161,0.22))",
+          filter: "drop-shadow(0 16px 32px rgba(13,71,161,0.25))",
           ease: "power1.inOut",
         },
         0
       );
 
-      // 2. Move document cards smoothly inward towards the center
+      // 2. Move document cards smoothly inward towards the center behind the logo
       DATA_FLOW.items.forEach((item) => {
         const el = cardRefs.current[item.id];
         if (!el) return;
@@ -150,38 +149,13 @@ export function DataFlow() {
           </p>
         </div>
 
-        {/* Interactive Category Filter Tabs */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-surface/90 p-1.5 shadow-raised backdrop-blur-md">
-          {DATA_FLOW.categories.map((cat) => {
-            const Icon = ICONS[cat.icon as keyof typeof ICONS] || SparklesIcon;
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={cn(
-                  "flex items-center gap-2 rounded-full px-4 py-2 font-body text-[14.5px] font-semibold transition-all duration-200",
-                  isActive
-                    ? "bg-primary-800 text-text-on-primary shadow-sm"
-                    : "text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
-                )}
-              >
-                <span className={cn("flex h-4 w-4 items-center justify-center", isActive ? "text-primary-300" : "text-primary-600")}>
-                  <Icon />
-                </span>
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
-
         {/* The Central Command Operating Hub Stage */}
-        <div ref={stageRef} className="relative mt-10 w-full max-w-5xl">
+        <div ref={stageRef} className="relative mt-12 w-full max-w-5xl">
           <div className="relative h-[600px] w-full rounded-2xl border border-border/80 bg-gradient-to-b from-surface/95 via-surface/80 to-surface/95 p-6 shadow-overlay backdrop-blur-md overflow-hidden">
-            {/* Central Zerotone Operating Engine Node */}
+            {/* Central Zerotone Operating Engine Node — Highest Z-Index (z-50) so it appears prominently on top of cards */}
             <div
               ref={coreRef}
-              className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center origin-center"
+              className="absolute left-1/2 top-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center origin-center pointer-events-auto"
             >
               {/* Concentric Animated Radar Wave Rings */}
               <div className="relative flex h-36 w-36 items-center justify-center">
@@ -212,11 +186,10 @@ export function DataFlow() {
               </div>
             </div>
 
-            {/* Orbiting Live Document & Signal Cards */}
+            {/* Orbiting Live Document & Signal Cards (z-20 / z-30, below the central logo) */}
             {DATA_FLOW.items.map((item, idx) => {
               const Icon = ICONS[item.icon as keyof typeof ICONS] || DocumentIcon;
               const pos = POSITIONS[idx % POSITIONS.length];
-              const isSelected = activeCategory === "all" || item.category === activeCategory;
               const isHovered = hoveredItem === item.id;
 
               return (
@@ -227,17 +200,14 @@ export function DataFlow() {
                   }}
                   onMouseEnter={() => setHoveredItem(item.id)}
                   onMouseLeave={() => setHoveredItem(null)}
-                  className={cn(
-                    "group absolute z-30 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-opacity duration-300",
-                    isSelected ? "opacity-100" : "opacity-35 hover:opacity-80"
-                  )}
+                  className="group absolute z-20 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-opacity duration-300 opacity-100 hover:opacity-100"
                   style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
                 >
                   <div
                     className={cn(
                       "flex items-center gap-3 rounded-xl border bg-surface/95 px-3.5 py-2.5 shadow-raised backdrop-blur-sm transition-all duration-200",
                       isHovered
-                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1"
+                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1 z-30"
                         : "border-border hover:border-primary-300"
                     )}
                   >
