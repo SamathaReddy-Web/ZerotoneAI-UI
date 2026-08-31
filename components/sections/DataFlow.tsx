@@ -1,26 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useReducedMotion } from "motion/react";
 import {
   BankIcon,
+  BuildingOfficeIcon,
   ChecklistIcon,
   ClipboardListIcon,
   ClipboardQuestionIcon,
   DocumentIcon,
   PurchaseOrderIcon,
   ReceiptIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
   SwapIcon,
+  SyncIcon,
   TrendingUpIcon,
 } from "@/components/icons/Icons";
 import { Eyebrow } from "@/components/ui";
 import { DATA_FLOW } from "@/content/home";
 import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ICONS = {
   purchaseOrder: PurchaseOrderIcon,
@@ -32,231 +31,273 @@ const ICONS = {
   bank: BankIcon,
   bidPipeline: TrendingUpIcon,
   checklist: ChecklistIcon,
+  sync: SyncIcon,
+  sparkles: SparklesIcon,
+  building: BuildingOfficeIcon,
+  shield: ShieldCheckIcon,
 } as const;
 
-// Colorful, varied badges (not one repeated tint) — the "realistic file
-// type" read the reference gets from mixing real brand-colored icons.
-// Reusing the shared design-system tones rather than inventing new ones.
-const TONE = {
-  purchaseOrder: "bg-primary-100 text-primary-800",
-  rfi: "bg-warning-bg text-warning",
-  document: "bg-neutral-100 text-text-secondary",
-  changeOrders: "bg-warning-bg text-warning",
-  dailyLogs: "bg-primary-100 text-primary-800",
-  receipt: "bg-success-bg text-success",
-  bank: "bg-success-bg text-success",
-  bidPipeline: "bg-primary-100 text-primary-800",
-  checklist: "bg-neutral-100 text-text-secondary",
+const TONE_BADGES = {
+  primary: "bg-primary-50 text-primary-800 border-primary-300",
+  success: "bg-success-bg text-success border-success/30",
+  warning: "bg-warning-bg text-warning border-warning/30",
 } as const;
 
-// Scattered ring around the reserved center (where the logo mark sits) —
-// hand-placed, not a generated circle, so it reads as organic clutter
-// the way the reference does rather than a perfect radial menu. Numeric
-// (not Tailwind classes) because GSAP animates left/top directly, tweening
-// each card back toward center (50/50) as the section scrolls.
-const POSITIONS: Record<string, { left: number; top: number }> = {
-  po: { left: 4, top: 30 },
-  rfi: { left: 15, top: 6 },
-  submittal: { left: 38, top: 2 },
-  co: { left: 63, top: 5 },
-  dailyLog: { left: 85, top: 16 },
-  lienWaiver: { left: 92, top: 42 },
-  payApp: { left: 87, top: 68 },
-  invoice: { left: 68, top: 86 },
-  bank: { left: 43, top: 92 },
-  contract: { left: 19, top: 85 },
-  bid: { left: 3, top: 66 },
-  punchlist: { left: 8, top: 47 },
-};
+const POSITIONS = [
+  // Top quadrant
+  { left: 16, top: 12 },
+  { left: 50, top: 8 },
+  { left: 84, top: 12 },
+  // Mid upper
+  { left: 8, top: 38 },
+  { left: 92, top: 38 },
+  // Mid lower
+  { left: 8, top: 66 },
+  { left: 92, top: 66 },
+  // Bottom quadrant
+  { left: 18, top: 90 },
+  { left: 50, top: 92 },
+  { left: 82, top: 90 },
+  // Inner flanks
+  { left: 24, top: 48 },
+  { left: 76, top: 48 },
+];
 
-// Source logo.png is 341×73 (icon glyph + "ZEROTONE" wordmark). The icon
-// occupies the left ~16% — cropped via a fixed-width overflow-hidden
-// window rather than a separate asset, so it's always in sync with the
-// real logo file.
-const LOGO_NATURAL_WIDTH = 341;
-const LOGO_NATURAL_HEIGHT = 73;
-const ICON_CROP_FRACTION = 0.162;
-const MARK_HEIGHT = 76;
-const MARK_WIDTH = MARK_HEIGHT * (LOGO_NATURAL_WIDTH / LOGO_NATURAL_HEIGHT) * ICON_CROP_FRACTION;
-
-/**
- * New section (no §5.x source) — the light counterpart to the hero: every
- * construction document Zerotone ingests, converging into the bare
- * Zerotone mark (icon only, no wordmark, no card chrome) as the page
- * scrolls. Cards animate their own position back toward center (not just
- * a uniform group scale) so they visibly get pulled into the mark, while
- * the mark itself grows — two tied animations on one scrub.
- */
 export function DataFlow() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const markRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const reduceMotion = useReducedMotion();
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  useEffect(() => {
-    const isDesktop = window.matchMedia("(min-width: 640px)").matches;
-    if (reduceMotion || !isDesktop || !stageRef.current || !sectionRef.current || !markRef.current) return;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          // Deliberately short (not "+=130%") — this has to finish
-          // within whatever scroll room actually exists below the
-          // section, and right now that's not much (this is one of the
-          // first two sections on the page). A shorter pin still reads
-          // fine once more sections follow later; a too-long one just
-          // never reaches its end state on a short page.
-          end: "+=40%",
-          scrub: 0.6,
-          pin: true,
-        },
-      });
-
-      tl.to(markRef.current, { scale: 2.5, ease: "none" }, 0);
-
-      DATA_FLOW.items.forEach((item) => {
-        const el = cardRefs.current[item.id];
-        if (!el) return;
-        tl.to(
-          el,
-          { left: "50%", top: "50%", scale: 0.15, opacity: 0, ease: "none" },
-          0
-        );
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, [reduceMotion]);
+  const filteredItems = DATA_FLOW.items.filter((item) =>
+    activeCategory === "all" ? true : item.category === activeCategory
+  );
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden border-b border-border-subtle bg-background py-24 sm:py-28">
+    <section className="relative overflow-hidden border-b border-border-subtle bg-background py-20 sm:py-28">
+      {/* Background Architectural Ambient Glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 opacity-80"
         style={{
-          background: "radial-gradient(ellipse 900px 500px at 50% 20%, var(--primary-50), transparent 70%)",
+          background:
+            "radial-gradient(ellipse 900px 520px at 50% 30%, rgba(227, 242, 254, 0.7), transparent 75%)",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#082c61 1px, transparent 1px), linear-gradient(90deg, #082c61 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
         }}
       />
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center px-6 text-center">
-        <Eyebrow>{DATA_FLOW.eyebrow}</Eyebrow>
-        <h2 className="mx-auto mt-5 max-w-2xl text-balance font-display text-[30px] font-bold leading-[1.2] tracking-tight text-text-primary sm:text-[38px]">
-          {DATA_FLOW.heading}
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-balance font-body text-[15px] leading-relaxed text-text-secondary">
-          {DATA_FLOW.sub}
-        </p>
-      </div>
-
-      {/* Mobile — the scatter/convergence below is tuned for the wide
-          desktop stage; a separate simple stack, not a hidden copy. No
-          scroll-pin/zoom either — the effect needs room to breathe. */}
-      <div className="relative mx-auto mt-12 flex max-w-md flex-col items-center gap-8 px-6 sm:hidden">
-        <div className="relative overflow-hidden" style={{ width: MARK_WIDTH, height: MARK_HEIGHT }}>
-          <Image
-            src="/logo.png"
-            alt="Zerotone"
-            width={LOGO_NATURAL_WIDTH}
-            height={LOGO_NATURAL_HEIGHT}
-            // logo.png's background is opaque white, not transparent —
-            // multiply blend drops the white against this section's light
-            // background so only the icon strokes show, no visible tile.
-            className="absolute left-0 top-0 h-full w-auto max-w-none mix-blend-multiply"
-          />
+      <div className="relative mx-auto flex w-full max-w-7xl flex-col items-center px-6">
+        {/* Section Header */}
+        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+          <Eyebrow>{DATA_FLOW.eyebrow}</Eyebrow>
+          <h2 className="mt-4 text-balance font-display text-[32px] font-bold leading-[1.15] tracking-tight text-text-primary sm:text-[44px]">
+            {DATA_FLOW.heading}
+          </h2>
+          <p className="mt-4 max-w-2xl text-balance font-body text-[17px] leading-relaxed text-text-secondary">
+            {DATA_FLOW.sub}
+          </p>
         </div>
-        <div className="grid w-full grid-cols-2 gap-2.5">
-          {DATA_FLOW.items.map((item) => {
-            const Icon = ICONS[item.icon as keyof typeof ICONS];
+
+        {/* Interactive Category Filter Tabs */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-surface/90 p-1.5 shadow-raised backdrop-blur-md">
+          {DATA_FLOW.categories.map((cat) => {
+            const Icon = ICONS[cat.icon as keyof typeof ICONS] || SparklesIcon;
+            const isActive = activeCategory === cat.id;
             return (
-              <div
-                key={item.id}
-                className="flex items-center gap-2 rounded-xl border border-border bg-surface/95 px-2.5 py-2.5 shadow-raised"
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={cn(
+                  "flex items-center gap-2 rounded-full px-4 py-2 font-body text-[14.5px] font-semibold transition-all duration-200",
+                  isActive
+                    ? "bg-primary-800 text-text-on-primary shadow-sm"
+                    : "text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
+                )}
               >
-                <span
-                  className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg [&>svg]:h-4 [&>svg]:w-4",
-                    TONE[item.icon as keyof typeof TONE]
-                  )}
-                >
+                <span className={cn("flex h-4 w-4 items-center justify-center", isActive ? "text-primary-300" : "text-primary-600")}>
                   <Icon />
                 </span>
-                <span className="flex min-w-0 flex-col leading-tight">
-                  <span className="truncate font-body text-[11.5px] font-semibold text-text-primary">
-                    {item.label}
-                  </span>
-                  <span className="truncate font-data text-[10px] text-text-muted">{item.value}</span>
-                </span>
-              </div>
+                {cat.label}
+              </button>
             );
           })}
         </div>
-      </div>
 
-      <div ref={stageRef} className="relative mx-auto mt-16 hidden h-[440px] w-full max-w-4xl px-6 sm:mt-20 sm:block sm:h-[500px]">
-        {/* Bare icon mark — no card, no wordmark. GSAP's scrub tween
-            writes an inline transform to markRef immediately on setup
-            (even at progress 0, matrix identity) — that alone creates a
-            new stacking context, which walls off mix-blend-multiply
-            (below) from the real page background no matter how markRef
-            is centered. So the fill below isn't decorative: it's a flat
-            match for this section's actual background color (#f9fafb,
-            sampled directly — the two happen to be identical, so the
-            blend has nothing to hide), giving mix-blend-multiply a
-            backdrop to multiply against that holds up regardless of the
-            isolation boundary. No drop-shadow: logo.png has no real
-            alpha channel (its background is opaque white, not
-            transparent), so a drop-shadow filter casts a shadow around
-            the image's full rectangular bounds no matter how well the
-            blend hides the white — that rectangle, not a color
-            mismatch, was what actually made this read as "boxed". */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            ref={markRef}
-            className="overflow-hidden bg-background"
-            style={{ width: MARK_WIDTH, height: MARK_HEIGHT }}
-          >
-            <Image
-              src="/logo.png"
-              alt="Zerotone"
-              width={LOGO_NATURAL_WIDTH}
-              height={LOGO_NATURAL_HEIGHT}
-              priority
-              className="h-full w-auto max-w-none mix-blend-multiply"
-            />
+        {/* The Central Command Operating Hub */}
+        <div className="relative mt-12 w-full max-w-5xl">
+          <div className="relative h-[620px] w-full rounded-2xl border border-border/80 bg-gradient-to-b from-surface/95 via-surface/80 to-surface/95 p-6 shadow-overlay backdrop-blur-md">
+            {/* Dynamic SVG Connection Beams */}
+            <svg
+              className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="beamGradientActive" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#2196f3" stopOpacity="0.8" />
+                  <stop offset="50%" stopColor="#0d47a1" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#2196f3" stopOpacity="0.8" />
+                </linearGradient>
+                <linearGradient id="beamGradientMuted" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#d3d9e0" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#d3d9e0" stopOpacity="0.1" />
+                </linearGradient>
+              </defs>
+
+              {DATA_FLOW.items.map((item, idx) => {
+                const pos = POSITIONS[idx % POSITIONS.length];
+                const isSelected = activeCategory === "all" || item.category === activeCategory;
+                const isHovered = hoveredItem === item.id;
+
+                // Center is at 50, 50
+                const pathData = `M ${pos.left} ${pos.top} Q ${(pos.left + 50) / 2} ${(pos.top + 50) / 2 + (pos.top < 50 ? -3 : 3)}, 50 50`;
+
+                return (
+                  <g key={`path-${item.id}`}>
+                    <path
+                      d={pathData}
+                      fill="none"
+                      stroke={isSelected ? (isHovered ? "url(#beamGradientActive)" : "#90caf9") : "url(#beamGradientMuted)"}
+                      strokeWidth={isHovered ? 0.75 : isSelected ? 0.45 : 0.25}
+                      strokeDasharray={isSelected ? "1.5, 1.5" : "1, 2"}
+                      className={isSelected ? "animate-[dash_20s_linear_infinite]" : ""}
+                    />
+                    {/* Glowing energy packet moving along active line */}
+                    {isSelected && (
+                      <circle r={isHovered ? "0.9" : "0.55"} fill="#0d47a1">
+                        <animateMotion path={pathData} dur={`${3.5 + (idx % 3)}s`} repeatCount="indefinite" />
+                      </circle>
+                    )}
+                  </g>
+                );
+              })}
+            </svg>
+
+            {/* Central Zerotone Operating Engine Node */}
+            <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+              {/* Concentric Animated Radar Wave Rings */}
+              <div className="relative flex h-36 w-36 items-center justify-center">
+                <span className="absolute inset-0 animate-ping rounded-full border border-primary-300 opacity-25 duration-1000" />
+                <span className="absolute -inset-4 animate-pulse rounded-full border border-primary-600/30 opacity-40" />
+                <span className="absolute -inset-8 rounded-full border border-primary-600/15" />
+
+                {/* Core Badge Container */}
+                <div className="relative flex h-28 w-28 flex-col items-center justify-center rounded-2xl border-2 border-primary-600 bg-surface px-3 py-2 shadow-overlay">
+                  <Image
+                    src="/logo-mark.png"
+                    alt="Zerotone"
+                    width={48}
+                    height={48}
+                    priority
+                    className="h-10 w-auto object-contain"
+                  />
+                  <span className="mt-1 font-data text-[10.5px] font-bold uppercase tracking-wider text-primary-800">
+                    Zerotone AI
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Pill */}
+              <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-primary-300 bg-primary-50 px-3 py-1 text-center font-data text-[11px] font-semibold text-primary-800 shadow-sm">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-primary-600" />
+                Live Ingestion Active
+              </div>
+            </div>
+
+            {/* Orbiting Live Document & Signal Cards */}
+            {DATA_FLOW.items.map((item, idx) => {
+              const Icon = ICONS[item.icon as keyof typeof ICONS] || DocumentIcon;
+              const pos = POSITIONS[idx % POSITIONS.length];
+              const isSelected = activeCategory === "all" || item.category === activeCategory;
+              const isHovered = hoveredItem === item.id;
+
+              return (
+                <div
+                  key={item.id}
+                  onMouseEnter={() => setHoveredItem(item.id)}
+                  onMouseLeave={() => setHoveredItem(null)}
+                  className={cn(
+                    "group absolute z-30 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-300",
+                    isSelected ? "opacity-100 scale-100" : "opacity-35 scale-95 hover:opacity-80"
+                  )}
+                  style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+                >
+                  <div
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border bg-surface/95 px-3.5 py-2.5 shadow-raised backdrop-blur-sm transition-all duration-200",
+                      isHovered
+                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1"
+                        : "border-border hover:border-primary-300"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+                        TONE_BADGES[item.tone]
+                      )}
+                    >
+                      <Icon className="h-4.5 w-4.5" />
+                    </span>
+                    <div className="flex flex-col leading-tight">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-body text-[13.5px] font-bold text-text-primary">
+                          {item.label}
+                        </span>
+                        <span className="rounded bg-neutral-100 px-1.5 py-0.2 font-data text-[9.5px] font-medium text-text-muted">
+                          {item.status}
+                        </span>
+                      </div>
+                      <span className="font-data text-[11.5px] font-medium text-text-secondary">
+                        {item.value}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Micro Hover Inspection Drawer */}
+                  {isHovered && (
+                    <div className="absolute left-1/2 top-full z-40 mt-1.5 w-48 -translate-x-1/2 rounded-lg border border-primary-300 bg-surface p-2 text-center shadow-overlay animate-fade-in-up">
+                      <p className="font-data text-[10px] uppercase tracking-wider text-text-muted">
+                        Project Context
+                      </p>
+                      <p className="font-body text-[12px] font-semibold text-primary-800">
+                        {item.project}
+                      </p>
+                      <p className="mt-1 font-body text-[11px] text-text-secondary">
+                        {item.audit}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {DATA_FLOW.items.map((item) => {
-          const Icon = ICONS[item.icon as keyof typeof ICONS];
-          const pos = POSITIONS[item.id];
-          return (
+        {/* Live System Telemetry Strip */}
+        <div className="mt-12 grid w-full max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
+          {DATA_FLOW.stats.map((stat) => (
             <div
-              key={item.id}
-              ref={(el) => {
-                cardRefs.current[item.id] = el;
-              }}
-              className="absolute w-[10.5rem] -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+              key={stat.label}
+              className="flex flex-col items-center rounded-xl border border-border-subtle bg-surface/90 px-4 py-4 text-center shadow-raised backdrop-blur-sm transition-all duration-150 hover:border-primary-300"
             >
-              <div className="flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-border bg-surface/95 px-3 py-2.5 shadow-overlay backdrop-blur-sm">
-                <span
-                  className={cn(
-                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg [&>svg]:h-4 [&>svg]:w-4",
-                    TONE[item.icon as keyof typeof TONE]
-                  )}
-                >
-                  <Icon />
-                </span>
-                <span className="flex flex-col leading-tight">
-                  <span className="font-body text-[12.5px] font-semibold text-text-primary">{item.label}</span>
-                  <span className="font-data text-[10.5px] text-text-muted">{item.value}</span>
-                </span>
-              </div>
+              <span className="font-display text-[26px] font-bold text-primary-800 sm:text-[30px]">
+                {stat.value}
+              </span>
+              <span className="mt-0.5 font-body text-[13.5px] font-semibold text-text-primary">
+                {stat.label}
+              </span>
+              <span className="font-data text-[11px] text-text-muted">
+                {stat.detail}
+              </span>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
