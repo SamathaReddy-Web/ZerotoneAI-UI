@@ -82,44 +82,72 @@ export function DataFlow() {
     if (reduceMotion || !isDesktop || !sectionRef.current || !stageRef.current || !coreRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Smooth non-pinning scroll scrub that converges cards into the center
-      // as the user scrolls past the section, without trapping or locking the page scroll.
+      // Initialize logo to be hidden
+      gsap.set(coreRef.current, { scale: 0, opacity: 0 });
+
+      // Smooth scrub that converges cards into the center
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: stageRef.current,
-          start: "top 65%",
-          end: "bottom 20%",
-          scrub: 0.8,
+          trigger: sectionRef.current,
+          start: "center center",
+          end: "+=150vh", // Extended pin for the scale-up transition
+          scrub: 1,
+          pin: true,
         },
       });
 
-      // 1. Gently scale the central Zerotone core on top of cards
-      tl.to(
-        coreRef.current,
-        {
-          scale: 1.45,
-          filter: "drop-shadow(0 16px 32px rgba(13,71,161,0.25))",
-          ease: "power1.inOut",
-        },
-        0
-      );
-
-      // 2. Move document cards smoothly inward towards the center behind the logo
-      DATA_FLOW.items.forEach((item) => {
+      // 1. Move document cards smoothly inward towards the center
+      DATA_FLOW.items.forEach((item, idx) => {
         const el = cardRefs.current[item.id];
+        const pos = POSITIONS[idx % POSITIONS.length];
         if (!el) return;
-        tl.to(
+        tl.fromTo(
           el,
+          {
+            left: `${pos.left}%`,
+            top: `${pos.top}%`,
+            scale: 1,
+            opacity: 1,
+          },
           {
             left: "50%",
             top: "50%",
-            scale: 0.25,
-            opacity: 0.15,
-            ease: "power1.inOut",
+            scale: 0,
+            opacity: 0,
+            ease: "none",
+            duration: 1,
           },
           0
         );
       });
+
+      // 2. Gently scale the central Zerotone core up as cards disappear
+      tl.fromTo(
+        coreRef.current,
+        {
+          scale: 0,
+          opacity: 0,
+        },
+        {
+          scale: 1,
+          opacity: 1,
+          filter: "drop-shadow(0 16px 32px rgba(13,71,161,0.25))",
+          ease: "none",
+          duration: 0.5,
+        },
+        0.2 // Start this animation slightly after the cards begin moving
+      );
+
+      // 3. Scale-Up Transition
+      tl.to(
+        coreRef.current,
+        {
+          scale: 3.5, // Decreased maximum scale
+          ease: "power1.inOut",
+          duration: 1,
+        },
+        1.0 // Starts after cards vanish
+      );
     }, sectionRef);
 
     return () => ctx.revert();
@@ -151,38 +179,25 @@ export function DataFlow() {
 
         {/* The Central Command Operating Hub Stage */}
         <div ref={stageRef} className="relative mt-12 w-full max-w-5xl">
-          <div className="relative h-[600px] w-full rounded-2xl border border-border/80 bg-gradient-to-b from-surface/95 via-surface/80 to-surface/95 p-6 shadow-overlay backdrop-blur-md overflow-hidden">
-            {/* Central Zerotone Operating Engine Node — Highest Z-Index (z-50) so it appears prominently on top of cards */}
+          <div className="relative h-[600px] w-full">
+            {/* Central Zerotone Operating Engine Node */}
             <div
               ref={coreRef}
-              className="absolute left-1/2 top-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center origin-center pointer-events-auto"
+              className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center origin-center pointer-events-auto"
             >
-              {/* Concentric Animated Radar Wave Rings */}
-              <div className="relative flex h-36 w-36 items-center justify-center">
-                <span className="absolute inset-0 animate-ping rounded-full border border-primary-300 opacity-25 duration-1000" />
-                <span className="absolute -inset-4 animate-pulse rounded-full border border-primary-600/30 opacity-40" />
-                <span className="absolute -inset-8 rounded-full border border-primary-600/15" />
-
+              <div className="relative flex items-center justify-center">
                 {/* Core Badge Container */}
-                <div className="relative flex h-28 w-28 flex-col items-center justify-center rounded-2xl border-2 border-primary-600 bg-surface px-3 py-2 shadow-overlay">
-                  <Image
-                    src="/logo-mark.png"
-                    alt="Zerotone"
-                    width={48}
-                    height={48}
-                    priority
-                    className="h-10 w-auto object-contain"
-                  />
-                  <span className="mt-1 font-data text-[10.5px] font-bold uppercase tracking-wider text-primary-800">
-                    Zerotone AI
-                  </span>
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-surface shadow-[0_16px_40px_-10px_rgba(13,71,161,0.2)]">
+                  <div className="relative h-14 w-14 overflow-hidden">
+                    <Image
+                      src="/logo.png"
+                      alt="Zerotone"
+                      fill
+                      priority
+                      className="object-cover object-left"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              {/* Status Pill */}
-              <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-primary-300 bg-primary-50 px-3 py-1 text-center font-data text-[11px] font-semibold text-primary-800 shadow-sm">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-primary-600" />
-                Live Ingestion Active
               </div>
             </div>
 
@@ -205,30 +220,30 @@ export function DataFlow() {
                 >
                   <div
                     className={cn(
-                      "flex items-center gap-3 rounded-xl border bg-surface/95 px-3.5 py-2.5 shadow-raised backdrop-blur-sm transition-all duration-200",
+                      "flex items-center gap-4 rounded-xl border bg-surface/95 px-5 py-3.5 shadow-raised backdrop-blur-sm transition-all duration-200",
                       isHovered
-                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1 z-30"
-                        : "border-border hover:border-primary-300"
+                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1 z-20"
+                        : "border-border hover:border-primary-300 z-10"
                     )}
                   >
                     <span
                       className={cn(
-                        "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] border",
                         TONE_BADGES[item.tone]
                       )}
                     >
-                      <Icon className="h-4.5 w-4.5" />
+                      <Icon className="h-6 w-6" />
                     </span>
                     <div className="flex flex-col leading-tight">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-body text-[13.5px] font-bold text-text-primary">
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-body text-base font-bold text-text-primary whitespace-nowrap">
                           {item.label}
                         </span>
-                        <span className="rounded bg-neutral-100 px-1.5 py-0.2 font-data text-[9.5px] font-medium text-text-muted">
+                        <span className="rounded bg-neutral-100 px-2 py-0.5 font-data text-[11px] font-medium text-text-muted whitespace-nowrap">
                           {item.status}
                         </span>
                       </div>
-                      <span className="font-data text-[11.5px] font-medium text-text-secondary">
+                      <span className="font-data text-[13.5px] font-medium text-text-secondary whitespace-nowrap mt-1">
                         {item.value}
                       </span>
                     </div>
@@ -252,26 +267,6 @@ export function DataFlow() {
               );
             })}
           </div>
-        </div>
-
-        {/* Live System Telemetry Strip */}
-        <div className="mt-10 grid w-full max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4">
-          {DATA_FLOW.stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col items-center rounded-xl border border-border-subtle bg-surface/90 px-4 py-4 text-center shadow-raised backdrop-blur-sm transition-all duration-150 hover:border-primary-300"
-            >
-              <span className="font-display text-[26px] font-bold text-primary-800 sm:text-[30px]">
-                {stat.value}
-              </span>
-              <span className="mt-0.5 font-body text-[13.5px] font-semibold text-text-primary">
-                {stat.label}
-              </span>
-              <span className="font-data text-[11px] text-text-muted">
-                {stat.detail}
-              </span>
-            </div>
-          ))}
         </div>
       </div>
     </section>
