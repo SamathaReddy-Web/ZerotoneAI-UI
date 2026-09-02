@@ -3,64 +3,93 @@ import { ModuleFeaturesGrid } from "@/components/ui/modules/ModuleFeaturesGrid";
 import { ModuleMetrics } from "@/components/ui/modules/ModuleMetrics";
 import { ModuleTestimonial } from "@/components/ui/modules/ModuleTestimonial";
 import { ModuleCTA } from "@/components/ui/modules/ModuleCTA";
+import { BillsProblemSolution } from "@/components/sections/bills/BillsProblemSolution";
+import { BillsHeroVisual } from "@/components/sections/bills/BillsHeroVisual";
 import { RestOfZerotone } from "@/components/sections/RestOfZerotone";
 import { FAQSection } from "@/components/sections/FAQSection";
 
-import { ScanLine, GitBranch, AlertCircle, CalendarRange, FileWarning, CreditCard } from "lucide-react";
+import { ScanLine, FileCheck2, Wallet, Clock, BarChart3, Briefcase } from "lucide-react";
 
 export const metadata = {
-  title: "AP & Bills Software | Zerotone Construct",
-  description: "Automate invoice OCR, routing, and lien waiver tracking for construction AP teams.",
+  title: "Construction Billing Software | Zerotone Construct",
+  description: "Process vendor invoices fast. Track retention, lien waivers, and payment status. OCR invoice import. Real time AP aging.",
 };
 
 const FEATURES = [
   {
-    title: "Invoice OCR",
-    description: "AI extracts invoice data instantly from PDFs and emails, eliminating manual data entry.",
+    title: "Bill against any PO",
+    description: "Create bills tied to purchase orders. Or submit cash bills for vendors without POs. Track amount billed, retained, and paid.",
+    icon: <FileCheck2 className="h-6 w-6" strokeWidth={2} />,
+  },
+  {
+    title: "OCR invoice import",
+    description: "Snap a photo of a PDF invoice or scan it. Zerotone extracts vendor, date, amount, and line items automatically. No manual typing.",
     icon: <ScanLine className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Automated routing",
-    description: "Route invoices to the correct Project Manager based on project, vendor, or cost code.",
-    icon: <GitBranch className="h-6 w-6" strokeWidth={2} />,
+    title: "Retention & lien waivers",
+    description: "Set retention percentage per vendor. Capture lien waivers as they come in. Dashboard shows retention due by vendor.",
+    icon: <Wallet className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Budget validation",
-    description: "Automatically flag invoices that exceed the original PO or the remaining budget line item.",
-    icon: <AlertCircle className="h-6 w-6" strokeWidth={2} />,
+    title: "Payment status workflow",
+    description: "Bills move through statuses: Submitted → Reviewed → Approved → Paid. See aging invoices and payment due dates at a glance.",
+    icon: <Clock className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Payment scheduling",
-    description: "Schedule payments intelligently based on vendor terms, discount dates, and cash flow.",
-    icon: <CalendarRange className="h-6 w-6" strokeWidth={2} />,
+    title: "Real time AP aging",
+    description: "Dashboard shows invoices aged 0–30, 30–60, 60–90, 90+ days. Drill down by vendor or date range. Export for accounting review.",
+    icon: <BarChart3 className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Lien waiver tracking",
-    description: "Block payments automatically until the vendor uploads their signed conditional/unconditional lien waiver.",
-    icon: <FileWarning className="h-6 w-6" strokeWidth={2} />,
-  },
-  {
-    title: "Direct payments",
-    description: "Pay vendors via ACH or virtual card directly from the platform. No more printing checks.",
-    icon: <CreditCard className="h-6 w-6" strokeWidth={2} />,
+    title: "Feeds budget & cashflow",
+    description: "Bills lock in committed costs. Cashflow reports show what's billed, retained, and paid. Budget variances updated in real time.",
+    icon: <Briefcase className="h-6 w-6" strokeWidth={2} />,
   },
 ];
 
 const METRICS = [
   {
+    value: "80%",
+    label: "faster processing",
+    description: "OCR extracts vendor and amount instantly. No manual data entry. Bills ready for approval in seconds.",
+  },
+  {
     value: "0",
-    label: "manual entry",
-    description: "Advanced OCR technology eliminates the need to manually key invoice data into the ERP.",
+    label: "lost lien waivers",
+    description: "Capture lien waiver status on submission. Dashboard tracks all outstanding waivers by vendor and date.",
   },
   {
     value: "100%",
-    label: "lien compliance",
-    description: "Never release a check without the signed lien waiver in hand. The system blocks it.",
+    label: "retention visibility",
+    description: "Always know how much retention is due to each vendor. Payment planning is precise. No surprised retainage disputes.",
+  },
+];
+
+const BILLS_FAQS = [
+  {
+    question: "What is a bill in construction?",
+    answer: "A bill is an invoice from a vendor or subcontractor. It documents work completed, materials delivered, or services rendered. Bills are submitted against purchase orders, and amounts are tracked against budget. Retainage (hold back) is often applied per contract terms.",
   },
   {
-    value: "Fast",
-    label: "approvals",
-    description: "Cut invoice approval time from weeks to days with mobile PM approvals.",
+    question: "Can I create bills without a PO?",
+    answer: "Yes. Cash bills allow you to enter vendor invoices for expenses without a preexisting PO: useful for emergency repairs, small purchases, or soft costs.",
+  },
+  {
+    question: "How does OCR invoice import work?",
+    answer: "Take a photo of an invoice or upload a PDF. Zerotone extracts vendor name, invoice number, date, amount, and line items. Review the extracted data and submit. Saves 10 minutes per invoice.",
+  },
+  {
+    question: "How is retention handled?",
+    answer: "You set a retention percentage per vendor (e.g., 5%). When a bill for $10,000 is submitted, Zerotone automatically calculates $500 retained. Dashboard shows retention due by vendor and aging.",
+  },
+  {
+    question: "What is a lien waiver?",
+    answer: "A lien waiver is a legal document signed by a vendor or sub stating they waive the right to file a lien against the project. It's typically signed on partial and final invoice payment. Zerotone tracks lien waiver status and due date.",
+  },
+  {
+    question: "How do bills affect my budget?",
+    answer: "Approved bills lock in committed costs. Your budget variance report shows budget vs. actual. Cashflow reports show what's billed, when it's due, and how much is retained.",
   },
 ];
 
@@ -68,35 +97,36 @@ export default function BillsPage() {
   return (
     <>
       <ModuleHero
-        badge="AP & BILLS"
+        badge="BILLS MODULE"
         title={
           <>
-            Process invoices <span className="text-primary-800">without the paperwork.</span>
+            Process invoices fast. Control retainage. <span className="text-primary-800">Manage cash.</span>
           </>
         }
-        description="Transform your AP department. Let AI read the invoices, automate the approval routing, and hold payments until lien waivers are signed."
+        description="Submit bills tied to POs. Capture lien waivers. Track retention and payment status. Cashflow stays clear."
+        visual={<BillsHeroVisual />}
       />
+      <BillsProblemSolution />
       <ModuleFeaturesGrid
-        headline="Accounts payable on autopilot."
-        description="Built to handle the complexity of construction billing."
+        headline="No more data entry. No more retention math."
+        description="Automate the busywork out of accounts payable."
         features={FEATURES}
       />
       <ModuleMetrics
-        headline="Scale your accounting team."
+        headline="Clear invoices faster. Pay smarter."
         metrics={METRICS}
       />
       <ModuleTestimonial
-        quote='"Processing 500 invoices a month used to require two full-time clerks. Now AI reads the invoices, the PM approves them on their phone, and we pay them with a click."'
-        authorName="Controller"
-        authorTitle="Regional Commercial Contractor"
+        quote="Zerotone Construct is a young product running on live construction projects today. We don't publish quotes we can't attribute, ask us on a call and we'll walk you through the real system on a real project instead."
+        authorName="The Zerotone team"
+        authorTitle="The people who build and run the system"
       />
       <RestOfZerotone />
-      <FAQSection />
+      <FAQSection items={BILLS_FAQS} />
       <ModuleCTA
-        headline="Modernize your Accounts Payable."
-        description="Book a demo to see our AI invoice extraction and lien waiver tracking."
+        headline="Clear invoices faster. Pay smarter."
+        description="20 minute demo. See how OCR and retention tracking work together."
       />
     </>
   );
 }
-

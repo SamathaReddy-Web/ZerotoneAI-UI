@@ -3,64 +3,93 @@ import { ModuleFeaturesGrid } from "@/components/ui/modules/ModuleFeaturesGrid";
 import { ModuleMetrics } from "@/components/ui/modules/ModuleMetrics";
 import { ModuleTestimonial } from "@/components/ui/modules/ModuleTestimonial";
 import { ModuleCTA } from "@/components/ui/modules/ModuleCTA";
+import { SubmittalsProblemSolution } from "@/components/sections/submittals/SubmittalsProblemSolution";
+import { SubmittalsHeroVisual } from "@/components/sections/submittals/SubmittalsHeroVisual";
 import { RestOfZerotone } from "@/components/sections/RestOfZerotone";
 import { FAQSection } from "@/components/sections/FAQSection";
 
-import { FileSearch, GitCommit, PenTool, UploadCloud, Truck, History } from "lucide-react";
+import { FolderTree, ShieldCheck, FileType, CalendarClock, MessageSquare, Send } from "lucide-react";
 
 export const metadata = {
-  title: "Submittals Software | Zerotone Construct",
-  description: "Automate submittal register creation with AI. Track approvals, markups, and lead times in one place.",
+  title: "Submittal Management Software | Zerotone Construct",
+  description: "Track vendor submittals from draft to approval. Compliance tracking, spec section organization, lead time management.",
 };
 
 const FEATURES = [
   {
-    title: "AI spec extraction",
-    description: "Automatically extract the entire submittal register from the spec book using intelligent document parsing.",
-    icon: <FileSearch className="h-6 w-6" strokeWidth={2} />,
+    title: "Spec section organization",
+    description: "Submittals organized by CSI spec section (e.g., 05 12: Steel Framing). Easy to find and track by trade.",
+    icon: <FolderTree className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Approval workflows",
-    description: "Route submittals through custom approval chains (Sub -> GC -> Architect -> Engineer) automatically.",
-    icon: <GitCommit className="h-6 w-6" strokeWidth={2} />,
+    title: "Compliance tracking",
+    description: "Capture spec compliance, deviations, QA certifications, warranty info, country of origin. Audit trail shows what was reviewed.",
+    icon: <ShieldCheck className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Browser markup tools",
-    description: "Review, stamp, and markup submittals directly in your browser. No third-party PDF software required.",
-    icon: <PenTool className="h-6 w-6" strokeWidth={2} />,
+    title: "Manufacturer & product data",
+    description: "Store specs, warranty docs, certifications, and technical data on each submittal. No lost PDFs.",
+    icon: <FileType className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Subcontractor portal",
-    description: "Subs upload their submittals directly into the system. Automated reminders chase down missing items.",
-    icon: <UploadCloud className="h-6 w-6" strokeWidth={2} />,
+    title: "Lead time & schedule impact",
+    description: "Capture lead time and installation date. Dashboard shows critical submittals blocking the schedule.",
+    icon: <CalendarClock className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Procurement tracking",
-    description: "Track fabrication lead times and delivery dates directly on the submittal to ensure materials arrive on time.",
-    icon: <Truck className="h-6 w-6" strokeWidth={2} />,
+    title: "Approval workflow & comments",
+    description: "Draft → Submitted → In Review → Approved / Rejected / Revise. Comments and markup attached. Full audit trail.",
+    icon: <MessageSquare className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Revision control",
-    description: "Maintain a clear, auditable history of every revision, rejection, and final approval.",
-    icon: <History className="h-6 w-6" strokeWidth={2} />,
+    title: "Vendor communication",
+    description: "Vendors submit through portal. Notified of approvals or requests to revise. No lost emails.",
+    icon: <Send className="h-6 w-6" strokeWidth={2} />,
   },
 ];
 
 const METRICS = [
   {
-    value: "90%",
-    label: "faster log creation",
-    description: "AI extracts your submittal register from a 1,000 page spec book in minutes, not days.",
-  },
-  {
     value: "100%",
-    label: "version control",
-    description: "Ensure the field superintendent is always building off the currently approved submittal.",
+    label: "of submittals tracked",
+    description: "Every shop drawing has a record. Status, compliance, and schedule impact visible.",
   },
   {
-    value: "Zero",
-    label: "material delays",
-    description: "Track lead times and delivery dates directly on the submittal item to prevent schedule slips.",
+    value: "5 days",
+    label: "average review cycle",
+    description: "Streamlined process: upload, review, approve. Vendors notified. No chasing.",
+  },
+  {
+    value: "0 late",
+    label: "deliveries",
+    description: "Dashboard shows critical path submittals. Approve early to keep schedule.",
+  },
+];
+
+const SUBMITTALS_FAQS = [
+  {
+    question: "What is a submittal?",
+    answer: "A submittal is a vendor's submission of product data, shop drawings, or certifications for approval. E.g., steel beam details, window schedule, mechanical equipment specifications. GC or architect reviews and approves before the item ships or is installed.",
+  },
+  {
+    question: "How do I organize submittals?",
+    answer: "By CSI spec section. E.g., all steel submittals in one section, all window submittals in another. Vendors organize by trade, making review faster.",
+  },
+  {
+    question: "What is spec compliance?",
+    answer: "Spec compliance means the submittal meets the contract specs: size, material, finish, performance. You mark items as compliant, non compliant, or deviations with approval required.",
+  },
+  {
+    question: "Can vendors submit through Zerotone?",
+    answer: "Yes. Vendors have portal access. They upload submittals, attach PDFs, and submit. You get notified. They're notified of approvals or revision requests.",
+  },
+  {
+    question: "How do I capture lead time?",
+    answer: "When creating a submittal, enter lead time (e.g., '12 weeks to deliver'). Dashboard flags critical submittals with long lead times that could delay the schedule.",
+  },
+  {
+    question: "What happens after approval?",
+    answer: "The submittal is approved and the vendor is notified. The item is cleared to fabricate and ship. Lead time is tracked to ensure on time delivery.",
   },
 ];
 
@@ -71,32 +100,33 @@ export default function SubmittalsPage() {
         badge="SUBMITTALS"
         title={
           <>
-            From spec book to approved, <span className="text-primary-800">faster.</span>
+            Vendor approvals, on schedule. <span className="text-primary-800">No delays from missing specs.</span>
           </>
         }
-        description="Stop manually typing out submittal registers. Let AI extract the requirements, automate the workflow, and track procurement to keep the job on schedule."
+        description="Organize submittals by CSI section. Track compliance. Manage lead times. Keep vendors and schedule in sync."
+        visual={<SubmittalsHeroVisual />}
       />
+      <SubmittalsProblemSolution />
       <ModuleFeaturesGrid
-        headline="Complete control over what gets built."
-        description="A streamlined process for getting the right materials approved."
+        headline="Approvals that keep the schedule on track."
+        description="Organized by spec. Clear compliance. Bulletproof audit trail."
         features={FEATURES}
       />
       <ModuleMetrics
-        headline="Accelerate the approval cycle."
+        headline="Stop chasing shop drawings."
         metrics={METRICS}
       />
       <ModuleTestimonial
-        quote='"Building the submittal register used to take a project engineer a full week. Now they upload the specs to Zerotone and have a complete log to review in 10 minutes."'
-        authorName="Project Executive"
-        authorTitle="ENR Top 100 General Contractor"
+        quote="Zerotone Construct is a young product running on live construction projects today. We don't publish quotes we can't attribute, ask us on a call and we'll walk you through the real system on a real project instead."
+        authorName="The Zerotone team"
+        authorTitle="The people who build and run the system"
       />
       <RestOfZerotone />
-      <FAQSection />
+      <FAQSection items={SUBMITTALS_FAQS} />
       <ModuleCTA
-        headline="Automate your submittal register."
-        description="Book a demo to see how our AI extracts submittals from your spec book in seconds."
+        headline="Approvals that keep the schedule on track."
+        description="20 minute demo. See vendor submissions and approval workflow."
       />
     </>
   );
 }
-
