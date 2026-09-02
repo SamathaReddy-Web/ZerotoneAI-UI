@@ -67,9 +67,8 @@ export function Helmet({ position, rotationY = 0 }: HelmetProps) {
     });
   }, [logoTexture]);
 
-  // Extra large logo geometry for maximum visibility (0.26m x 0.26m)
-  const logoGeo = useMemo(() => new THREE.PlaneGeometry(0.26, 0.26), []);
-  const sideLogoGeo = useMemo(() => new THREE.PlaneGeometry(0.25, 0.25), []);
+  // Extra large logo geometry for maximum visibility on both sides
+  const sideLogoGeo = useMemo(() => new THREE.PlaneGeometry(0.26, 0.26), []);
 
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
@@ -118,7 +117,7 @@ export function Helmet({ position, rotationY = 0 }: HelmetProps) {
         material={helmetHarnessMaterial}
       />
 
-      {/* ── 5. PROMINENT LARGE ZEROTONE LOGOS ── */}
+      {/* ── 5. PROMINENT ZEROTONE LOGOS ON BOTH SIDES ── */}
       {/* A. RIGHT SIDE LOGO (Large & clearly visible from 3/4 isometric camera) */}
       <mesh
         position={[0.312, 0.125, 0.02]}
@@ -132,14 +131,6 @@ export function Helmet({ position, rotationY = 0 }: HelmetProps) {
         position={[-0.312, 0.125, 0.02]}
         rotation={[0, -(Math.PI / 2), 0.15]}
         geometry={sideLogoGeo}
-        material={logoMaterial}
-      />
-
-      {/* C. FRONT FOREHEAD LOGO (Large & bold on the front crown) */}
-      <mesh
-        position={[0, 0.145, 0.315]}
-        rotation={[-0.36, 0, 0]}
-        geometry={logoGeo}
         material={logoMaterial}
       />
     </group>

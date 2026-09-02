@@ -27,12 +27,12 @@ function AnimatedForeground({ reduceMotion }: { reduceMotion: boolean }) {
     const t = state.clock.elapsedTime;
     // Gentle subtle idle float
     groupRef.current.position.y = Math.sin(t * 1.8) * 0.03;
-    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.04 - 0.45;
+    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.04 - 0.65;
   });
 
   return (
     <group ref={groupRef}>
-      <Helmet position={[0, 0.14, 0]} rotationY={-0.45} />
+      <Helmet position={[0, 0.14, 0]} rotationY={-0.65} />
       <Blueprints position={[0.55, 0.05, 0.25]} rotationY={0.6} />
     </group>
   );
