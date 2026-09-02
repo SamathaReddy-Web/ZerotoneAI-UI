@@ -81,8 +81,8 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
         <Crane mastHeight={MAST_HEIGHT} reduceMotion={reduceMotion} />
       </group>
 
-      {/* Foreground Hero Helmet & Blueprints (spaced in foreground for clear visual separation) */}
-      <group scale={3.4} position={[1.4, GROUND_Y, 4.9]}>
+      {/* Foreground Hero Helmet & Blueprints */}
+      <group scale={3.5} position={[1.2, GROUND_Y, 3.85]}>
         <AnimatedForeground reduceMotion={reduceMotion} />
       </group>
 
