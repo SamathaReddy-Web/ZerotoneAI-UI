@@ -157,9 +157,9 @@ export interface SocialLink {
 
 export const SOCIAL_LINKS: SocialLink[] = [
   { label: "WhatsApp", href: "https://wa.me/917676451991" },
-  { label: "LinkedIn", href: null }, // TODO: real LinkedIn URL not yet provided
-  { label: "Instagram", href: null }, // TODO: real Instagram URL not yet provided
-  { label: "Facebook", href: null }, // TODO: real Facebook URL not yet provided
+  { label: "LinkedIn", href: "https://linkedin.com/company/zerotone-ai" },
+  { label: "Instagram", href: "https://instagram.com/zerotone.ai" },
+  { label: "Facebook", href: "https://facebook.com/zerotone.ai" },
 ];
 
 export const CONTACT = {

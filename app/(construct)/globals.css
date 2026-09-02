@@ -40,7 +40,7 @@
   --info: var(--primary-600);
 
   /* Surfaces / text roles */
-  --background: var(--neutral-25);
+  --background: var(--neutral-0);
   --surface: var(--neutral-0);
   --border: var(--neutral-300);
   --border-subtle: var(--neutral-100);
@@ -128,7 +128,7 @@ body {
   background: var(--background);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 17px;
+  font-size: 19px;
   line-height: 1.6;
 }
 

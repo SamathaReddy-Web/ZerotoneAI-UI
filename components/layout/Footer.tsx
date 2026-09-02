@@ -3,11 +3,7 @@ import {
   BRAND_TAGLINE,
   CONSTRUCT_BASE_PATH,
   CONTACT,
-  FOOTER_PLATFORM_LINKS,
-  FOOTER_SECONDARY_LINKS,
-  FOOTER_COMPANY_LINKS,
   SOCIAL_LINKS,
-  constructHref,
 } from "@/content/navigation";
 import { WhatsAppIcon, LinkedInIcon, InstagramIcon, FacebookIcon } from "@/components/icons/Icons";
 import { Logo } from "./Logo";
@@ -19,31 +15,24 @@ const SOCIAL_ICONS = {
   Facebook: FacebookIcon,
 } as const;
 
-function FooterColumn({
+function FooterLinkColumn({
   title,
   links,
 }: {
-  title?: string;
-  links: { label: string; slug: string; highlight?: boolean }[];
+  title: string;
+  links: { label: string; href: string }[];
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <p
-        aria-hidden={title ? undefined : "true"}
-        className={`font-data text-[13px] font-semibold uppercase tracking-wider ${
-          title ? "text-text-muted" : "invisible"
-        }`}
-      >
-        {title ?? "Platform"}
+      <p className="font-data text-[15px] font-semibold uppercase tracking-wider text-text-muted">
+        {title}
       </p>
       <ul className="flex flex-col gap-2.5">
         {links.map((link) => (
-          <li key={link.slug}>
+          <li key={link.label}>
             <Link
-              href={link.slug ? constructHref(link.slug) : CONSTRUCT_BASE_PATH}
-              className={`font-body text-[15.5px] transition-colors ${
-                link.highlight ? "text-primary-600 font-semibold hover:text-primary-800" : "text-text-secondary hover:text-primary-800"
-              }`}
+              href={link.href}
+              className="font-body text-[17.5px] text-text-secondary transition-colors hover:text-primary-800"
             >
               {link.label}
             </Link>
@@ -57,15 +46,15 @@ function FooterColumn({
 export function Footer() {
   return (
     <footer className="border-t border-border-subtle bg-surface">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
         <div className="flex flex-col gap-4">
           <Link href={`${CONSTRUCT_BASE_PATH}#hero`} className="flex items-center">
             <Logo />
           </Link>
-          <p className="max-w-[38ch] font-body text-[15.5px] leading-relaxed text-text-secondary">
+          <p className="max-w-[38ch] font-body text-[17.5px] leading-relaxed text-text-secondary">
             {BRAND_TAGLINE}
           </p>
-          <p className="max-w-[36ch] font-body text-[14px] leading-relaxed text-text-muted">
+          <p className="max-w-[36ch] font-body text-[16px] leading-relaxed text-text-muted">
             {CONTACT.address}
           </p>
           <div className="flex items-center gap-3 pt-1">
@@ -103,17 +92,34 @@ export function Footer() {
           </div>
         </div>
 
-        <FooterColumn title="Platform" links={FOOTER_PLATFORM_LINKS} />
-        <FooterColumn links={FOOTER_SECONDARY_LINKS} />
-        <FooterColumn title="Company" links={FOOTER_COMPANY_LINKS} />
+        <FooterLinkColumn
+          title="Useful Links"
+          links={[
+            { label: "How We Work", href: "/#how-we-work" },
+            { label: "Pilot Projects", href: "/#pilot" },
+            { label: "Contact Us", href: "/#contact" },
+          ]}
+        />
+        <FooterLinkColumn
+          title="Legal"
+          links={[
+            { label: "Privacy Policy", href: "#" },
+            { label: "Terms & Conditions", href: "#" },
+          ]}
+        />
       </div>
 
       <div className="border-t border-border-subtle">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-1.5 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-body text-[14px] text-text-muted">
-            © 2026 Zerotone. All rights reserved.
-          </p>
-          <p className="font-body text-[14px] text-text-muted">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-6 pt-6 pb-12 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <p className="font-body text-[16px] font-medium text-text-secondary">
+              Zerotone AI Technology Private Limited
+            </p>
+            <p className="font-body text-[16px] text-text-muted">
+              © 2026 Zerotone. All rights reserved.
+            </p>
+          </div>
+          <p className="font-body text-[16px] text-text-muted">
             Built for builders. Made with care.
           </p>
         </div>

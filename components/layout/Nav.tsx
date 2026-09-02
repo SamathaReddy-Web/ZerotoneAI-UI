@@ -25,8 +25,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      data-cursor="link"
-      className="group relative py-2 font-body text-[16px] font-medium text-text-secondary transition-colors hover:text-text-primary"
+      className="group relative py-2 font-body text-[18px] font-medium text-text-secondary transition-colors hover:text-text-primary"
     >
       {children}
       <span className="pointer-events-none absolute inset-x-0 -bottom-0.5 h-[1.5px] origin-left scale-x-0 bg-primary-800 transition-transform duration-200 group-hover:scale-x-100" />
@@ -115,7 +114,7 @@ export function Nav() {
           className={`mx-auto flex h-16 w-full items-center justify-between border transition-[max-width,border-radius,background-color,border-color,box-shadow,padding] duration-300 ease-out ${
             scrolled
               ? "max-w-5xl rounded-full border-border bg-surface/90 px-5 shadow-raised backdrop-blur-md"
-              : "max-w-7xl border-transparent bg-surface px-6"
+              : "max-w-7xl border-transparent bg-transparent px-6"
           }`}
         >
           <Link href={homeHref} className="flex items-center">
@@ -123,36 +122,49 @@ export function Nav() {
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex">
-            <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-              <button
-                ref={triggerRef}
-                aria-expanded={modulesOpen}
-                aria-controls={MEGA_MENU_ID}
-                aria-haspopup="true"
-                onClick={handleTriggerClick}
-                onKeyDown={handleTriggerKeyDown}
-                className={`group relative flex items-center gap-1.5 py-2 font-body text-[16px] font-medium transition-colors ${
-                  isModulesActive ? "text-primary-800" : "text-text-secondary hover:text-text-primary"
-                }`}
-              >
-                Modules
-                <ChevronDownIcon
-                  className={`h-3.5 w-3.5 transition-transform duration-200 ${modulesOpen ? "rotate-180" : ""}`}
-                />
-                <span
-                  className={`pointer-events-none absolute inset-x-0 -bottom-0.5 h-[1.5px] origin-left bg-primary-800 transition-transform duration-200 ${
-                    isModulesActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+            {pathname !== '/' && (
+              <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <button
+                  ref={triggerRef}
+                  aria-expanded={modulesOpen}
+                  aria-controls={MEGA_MENU_ID}
+                  aria-haspopup="true"
+                  onClick={handleTriggerClick}
+                  onKeyDown={handleTriggerKeyDown}
+                  className={`group relative flex items-center gap-1.5 py-2 font-body text-[18px] font-medium transition-colors ${
+                    isModulesActive ? "text-primary-800" : "text-text-secondary hover:text-text-primary"
                   }`}
-                />
-              </button>
-              {modulesOpen && (
-                <NavMegaMenu id={MEGA_MENU_ID} onLinkClick={() => setModulesOpen(false)} />
-              )}
-            </div>
+                >
+                  Modules
+                  <ChevronDownIcon
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${modulesOpen ? "rotate-180" : ""}`}
+                  />
+                  <span
+                    className={`pointer-events-none absolute inset-x-0 -bottom-0.5 h-[1.5px] origin-left bg-primary-800 transition-transform duration-200 ${
+                      isModulesActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </button>
+                {modulesOpen && (
+                  <NavMegaMenu id={MEGA_MENU_ID} onLinkClick={() => setModulesOpen(false)} />
+                )}
+              </div>
+            )}
 
-            <NavLink href={PRICING_HREF}>Pricing</NavLink>
-            <NavLink href={FAQ_HREF}>FAQ&apos;s</NavLink>
-            <NavLink href="/construct">Construct</NavLink>
+            {pathname === '/' ? (
+              <>
+                <NavLink href="/#how-we-work">Method</NavLink>
+                <NavLink href="/#approach">Approach</NavLink>
+                <NavLink href="/#built">Built</NavLink>
+                <NavLink href="/construct">Construct</NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink href="/construct#tour">How it works</NavLink>
+                <NavLink href={PRICING_HREF}>Pricing</NavLink>
+                <NavLink href={FAQ_HREF}>FAQ&apos;s</NavLink>
+              </>
+            )}
           </nav>
 
           <div className="flex items-center gap-2">
