@@ -100,6 +100,9 @@ export function Nav() {
 
   useEffect(() => clearTimers, []);
 
+  const isConstruct = pathname?.startsWith(CONSTRUCT_BASE_PATH);
+  const homeHref = isConstruct ? `${CONSTRUCT_BASE_PATH}#hero` : "/";
+
   return (
     <>
       <header
@@ -115,7 +118,7 @@ export function Nav() {
               : "max-w-7xl border-transparent bg-surface px-6"
           }`}
         >
-          <Link href={`${CONSTRUCT_BASE_PATH}#hero`} className="flex items-center">
+          <Link href={homeHref} className="flex items-center">
             <Logo />
           </Link>
 
