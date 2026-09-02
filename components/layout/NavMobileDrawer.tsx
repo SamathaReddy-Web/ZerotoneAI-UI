@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui";
 import { ChevronDownIcon, CloseIcon } from "@/components/icons/Icons";
 import { Logo } from "./Logo";
@@ -24,6 +25,8 @@ export function NavMobileDrawer({
   const [modulesOpen, setModulesOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const pathname = usePathname();
 
   // Lock body scroll while the drawer is open.
   useEffect(() => {
@@ -103,73 +106,112 @@ export function NavMobileDrawer({
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
-          <button
-            onClick={() => setModulesOpen((v) => !v)}
-            aria-expanded={modulesOpen}
-            aria-controls="mobile-modules-panel"
-            className="flex items-center justify-between rounded-md px-2.5 py-3 text-left font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
-          >
-            Modules
-            <ChevronDownIcon
-              className={`h-4 w-4 text-text-muted transition-transform duration-200 ${
-                modulesOpen ? "rotate-180" : ""
-              }`}
-            />
-          </button>
+          {pathname !== '/' && (
+            <>
+              <button
+                onClick={() => setModulesOpen((v) => !v)}
+                aria-expanded={modulesOpen}
+                aria-controls="mobile-modules-panel"
+                className="flex items-center justify-between rounded-md px-2.5 py-3 text-left font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Modules
+                <ChevronDownIcon
+                  className={`h-4 w-4 text-text-muted transition-transform duration-200 ${
+                    modulesOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
-          <div
-            id="mobile-modules-panel"
-            className={`grid overflow-hidden transition-[grid-template-rows] duration-[250ms] ease-out ${
-              modulesOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-            }`}
-          >
-            <div className="min-h-0 overflow-hidden">
-              <div className="flex flex-col gap-4 py-2 pl-4 pr-1">
-                {MODULE_CATEGORIES.map((category) => (
-                  <div key={category.key} className="flex flex-col gap-1">
-                    <div className="border-b border-border-subtle pb-2 mb-1 px-2.5">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-                        {category.label}
-                      </p>
-                    </div>
-                    {MODULES.filter((m) => m.category === category.key).map((mod) => (
-                      <Link
-                        key={mod.slug}
-                        href={constructHref(mod.slug)}
-                        onClick={onClose}
-                        className="flex items-center gap-3 rounded-md px-2.5 py-2.5 font-body text-[15.5px] text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
-                      >
-                        {mod.icon && <mod.icon className="h-5 w-5 shrink-0 text-text-muted" />}
-                        <span>{mod.label}</span>
-                      </Link>
+              <div
+                id="mobile-modules-panel"
+                className={`grid overflow-hidden transition-[grid-template-rows] duration-[250ms] ease-out ${
+                  modulesOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                }`}
+              >
+                <div className="min-h-0 overflow-hidden">
+                  <div className="flex flex-col gap-4 py-2 pl-4 pr-1">
+                    {MODULE_CATEGORIES.map((category) => (
+                      <div key={category.key} className="flex flex-col gap-1">
+                        <div className="border-b border-border-subtle pb-2 mb-1 px-2.5">
+                          <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                            {category.label}
+                          </p>
+                        </div>
+                        {MODULES.filter((m) => m.category === category.key).map((mod) => (
+                          <Link
+                            key={mod.slug}
+                            href={constructHref(mod.slug)}
+                            onClick={onClose}
+                            className="flex items-center gap-3 rounded-md px-2.5 py-2.5 font-body text-[15.5px] text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
+                          >
+                            {mod.icon && <mod.icon className="h-5 w-5 shrink-0 text-text-muted" />}
+                            <span>{mod.label}</span>
+                          </Link>
+                        ))}
+                      </div>
                     ))}
                   </div>
-                ))}
+                </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
 
-          <Link
-            href={PRICING_HREF}
-            onClick={onClose}
-            className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
-          >
-            Pricing
-          </Link>
-          <Link
-            href={FAQ_HREF}
-            onClick={onClose}
-            className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
-          >
-            FAQ&apos;s
-          </Link>
-          <Link
-            href="/construct"
-            onClick={onClose}
-            className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
-          >
-            Construct
-          </Link>
+          {pathname === '/' ? (
+            <>
+              <Link
+                href="/#how-we-work"
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Method
+              </Link>
+              <Link
+                href="/#approach"
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Approach
+              </Link>
+              <Link
+                href="/#built"
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Built
+              </Link>
+              <Link
+                href="/construct"
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Construct
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/construct#tour"
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                How it works
+              </Link>
+              <Link
+                href={PRICING_HREF}
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                Pricing
+              </Link>
+              <Link
+                href={FAQ_HREF}
+                onClick={onClose}
+                className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+              >
+                FAQ&apos;s
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="border-t border-border-subtle p-4">

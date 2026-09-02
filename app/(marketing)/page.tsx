@@ -1,4 +1,3 @@
-import { Nav } from '@/components/layout/Nav';
 import { Hero } from '@/components/marketing/ui/hero';
 import { HowItWorks } from '@/components/marketing/ui/how-it-works';
 import { Capabilities } from '@/components/marketing/ui/capabilities';
@@ -6,7 +5,7 @@ import { BuiltSection } from '@/components/marketing/ui/built-section';
 import { Founder } from '@/components/marketing/ui/founder';
 import { FAQ } from '@/components/marketing/ui/faq';
 import { ContactForm } from '@/components/marketing/ui/contact-form';
-import { Footer } from '@/components/marketing/ui/footer';
+import { Nav, Footer } from '@/components/layout';
 
 export default function Page() {
   return (

@@ -114,7 +114,7 @@ export function ProductStorySection() {
   };
 
   return (
-    <section ref={containerRef} className="relative w-full h-[400vh] bg-surface text-text-primary border-t border-border-subtle">
+    <section id="how-it-works" ref={containerRef} className="relative w-full h-[400vh] bg-surface text-text-primary border-t border-border-subtle">
       {/* Sticky Inner Container */}
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center bg-surface">
         

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Barlow_Semi_Condensed, Source_Sans_3, JetBrains_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/marketing/theme-provider"
@@ -34,12 +34,23 @@ export const metadata: Metadata = {
   },
 }
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
-
-const fontMono = Geist_Mono({
+const barlowSemiCondensed = Barlow_Semi_Condensed({
+  variable: "--font-barlow-semi-condensed",
   subsets: ["latin"],
-  variable: "--font-mono",
-})
+  weight: ["500", "600", "700"],
+});
+
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
 
 export default function RootLayout({
   children,
@@ -50,9 +61,9 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", geist.variable)}
+      className={cn("antialiased h-full", barlowSemiCondensed.variable, sourceSans.variable, jetbrainsMono.variable)}
     >
-      <body>
+      <body className="min-h-full flex flex-col bg-background text-text-secondary">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
