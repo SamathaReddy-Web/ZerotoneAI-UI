@@ -103,6 +103,14 @@ export function NavMobileDrawer({
         </div>
 
         <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
+          <Link
+            href="/construct"
+            onClick={onClose}
+            className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+          >
+            Construct
+          </Link>
+
           <button
             onClick={() => setModulesOpen((v) => !v)}
             aria-expanded={modulesOpen}
