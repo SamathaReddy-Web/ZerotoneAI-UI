@@ -58,16 +58,13 @@ function PrecastBarrierStack({ position }: { position: [number, number, number] 
 function GlowingCircuitTraces() {
   const traces = useMemo(() => {
     return [
-      // Main trunk lines flowing to the building foundation
+      // Foundation AI circuit pathways flowing to the structure
       { start: [-4.2, 3.2], mid: [-1.8, 3.2], end: [-1.8, 1.4] },
       { start: [-1.8, 1.4], mid: [-0.6, 1.4], end: [-0.6, 0.6] },
       { start: [3.4, 3.8], mid: [2.2, 3.8], end: [2.2, 1.8] },
       { start: [2.2, 1.8], mid: [1.4, 1.8], end: [1.4, 0.5] },
       { start: [4.0, 1.2], mid: [2.8, 1.2], end: [1.8, 0.6] },
-      // Branch connecting toward the foreground helmet
-      { start: [-0.6, 4.4], mid: [0.8, 4.4], end: [0.8, 3.2] },
-      { start: [0.8, 3.2], mid: [1.4, 3.2], end: [1.4, 2.6] },
-      { start: [-2.5, 4.0], mid: [-1.0, 4.0], end: [-1.0, 3.0] },
+      { start: [-3.2, 2.0], mid: [-1.5, 2.0], end: [-1.0, 0.8] },
     ];
   }, []);
 
