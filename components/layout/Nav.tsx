@@ -157,7 +157,7 @@ export function Nav() {
 
           <div className="flex items-center gap-2">
             <Button href={GET_STARTED_HREF} size="md" className="hidden md:inline-flex">
-              Talk to the Team →
+              Book a Diagnostic
             </Button>
             <button
               onClick={() => setMobileOpen(true)}

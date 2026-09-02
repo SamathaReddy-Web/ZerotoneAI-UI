@@ -174,7 +174,7 @@ export function NavMobileDrawer({
 
         <div className="border-t border-border-subtle p-4">
           <Button href={GET_STARTED_HREF} onClick={onClose} className="w-full">
-            Talk to the Team →
+            Book a Diagnostic
           </Button>
         </div>
       </div>
