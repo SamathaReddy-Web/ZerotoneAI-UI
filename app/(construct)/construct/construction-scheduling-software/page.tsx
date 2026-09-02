@@ -3,100 +3,130 @@ import { ModuleFeaturesGrid } from "@/components/ui/modules/ModuleFeaturesGrid";
 import { ModuleMetrics } from "@/components/ui/modules/ModuleMetrics";
 import { ModuleTestimonial } from "@/components/ui/modules/ModuleTestimonial";
 import { ModuleCTA } from "@/components/ui/modules/ModuleCTA";
+import { SchedulingProblemSolution } from "@/components/sections/scheduling/SchedulingProblemSolution";
+import { SchedulingHeroVisual } from "@/components/sections/scheduling/SchedulingHeroVisual";
 import { RestOfZerotone } from "@/components/sections/RestOfZerotone";
 import { FAQSection } from "@/components/sections/FAQSection";
 
-import { CalendarRange, Link2, History, Smartphone, CalendarDays, Users } from "lucide-react";
+import { Hand, Link2, Users, FileBarChart2, CloudRain, Baseline } from "lucide-react";
 
 export const metadata = {
-  title: "Scheduling Software | Zerotone Construct",
-  description: "Interactive Gantt charts, live critical paths, and automated lookaheads for your projects.",
+  title: "Construction Scheduling Software | Gantt Charts | Zerotone Construct",
+  description: "Drag and drop Gantt scheduling for construction GCs: look ahead reports, baseline tracking, CPM critical path. No P6 license required.",
 };
 
 const FEATURES = [
   {
-    title: "Interactive Gantt charts",
-    description: "Build and manage complex schedules with interactive Gantt charts that automatically calculate the critical path.",
-    icon: <CalendarRange className="h-6 w-6" strokeWidth={2} />,
+    title: "Drag and drop Gantt",
+    description: "Build and update your schedule visually. Drag tasks, extend durations, and the whole schedule recalculates automatically.",
+    icon: <Hand className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Dependency tracking",
-    description: "Link tasks with finish-to-start, start-to-start, and finish-to-finish dependencies. Changes ripple automatically.",
+    title: "Predecessor logic",
+    description: "Set finish to start, start to start, and lag relationships. Zerotone warns you when a predecessor slip will impact your milestones.",
     icon: <Link2 className="h-6 w-6" strokeWidth={2} />,
   },
   {
-    title: "Baseline comparison",
-    description: "Save schedule baselines and compare current progress against your original plans to identify slip early.",
-    icon: <History className="h-6 w-6" strokeWidth={2} />,
-  },
-  {
-    title: "Field schedule updates",
-    description: "Superintendents can update task completion percentages directly from the field via the mobile app.",
-    icon: <Smartphone className="h-6 w-6" strokeWidth={2} />,
-  },
-  {
-    title: "Lookahead schedules",
-    description: "Automatically generate and distribute 3-week lookahead reports for your weekly subcontractor meetings.",
-    icon: <CalendarDays className="h-6 w-6" strokeWidth={2} />,
-  },
-  {
     title: "Resource loading",
-    description: "Assign crews, subcontractors, and equipment to tasks to prevent overallocation and bottlenecks.",
+    description: "See your crew and sub commitments across tasks. Catch overloading before you commit to a schedule you can't staff.",
     icon: <Users className="h-6 w-6" strokeWidth={2} />,
+  },
+  {
+    title: "3 week look ahead",
+    description: "Auto generated look ahead reports for your weekly owner meeting. Shows what's starting, what's finishing, and what needs attention.",
+    icon: <FileBarChart2 className="h-6 w-6" strokeWidth={2} />,
+  },
+  {
+    title: "Weather day buffers",
+    description: "Add weather contingency buffers to exterior work phases. Zerotone tracks consumed float and flags when you're running out.",
+    icon: <CloudRain className="h-6 w-6" strokeWidth={2} />,
+  },
+  {
+    title: "Baseline comparison",
+    description: "Lock your original schedule as a baseline. See slippage clearly (planned vs. actual) on every task and milestone.",
+    icon: <Baseline className="h-6 w-6" strokeWidth={2} />,
   },
 ];
 
 const METRICS = [
   {
-    value: "100%",
-    label: "team alignment",
-    description: "Everyone from the owner to the subs works off the exact same live, cloud-based schedule.",
+    value: "35%",
+    label: "fewer schedule slips",
+    description: "GCs using Zerotone scheduling catch predecessor conflicts 2 weeks earlier than teams running spreadsheet schedules.",
   },
   {
-    value: "3 week",
-    label: "lookahead automation",
-    description: "Stop manually building lookaheads in Excel. Generate them instantly from the master schedule.",
+    value: "4 hrs",
+    label: "saved per week",
+    description: "Auto generated look aheads replace manual PowerPoint schedule updates before every owner meeting.",
   },
   {
-    value: "Live",
-    label: "critical path",
-    description: "Know instantly when a minor delay pushes your final completion date and take action.",
+    value: "1 day",
+    label: "to build a baseline",
+    description: "Import your project milestones and build a complete Gantt schedule in a single afternoon: no P6 training required.",
   },
 ];
 
-export default function SchedulingPage() {
+const SCHEDULING_FAQS = [
+  {
+    question: "Is Zerotone compatible with Primavera P6 or Microsoft Project?",
+    answer: "You can import XER (P6) and MPP (MS Project) files into Zerotone to use as a starting point. Export back to those formats is on the roadmap. For most small GCs, Zerotone's native scheduling is all they need.",
+  },
+  {
+    question: "Can I share the schedule with my owner or architect?",
+    answer: "Yes: view only links let owners and architects see live schedule status without logging in. You can also export PDF Gantt charts for contract submittals.",
+  },
+  {
+    question: "How does Zerotone handle schedule changes mid project?",
+    answer: "Drag any task to update it. Zerotone recalculates all successors automatically and flags any milestones now at risk. You can save a new baseline and keep the old one for comparison.",
+  },
+  {
+    question: "Can my subs see their portion of the schedule?",
+    answer: "Yes. Subs log into the sub portal and see only the tasks assigned to their trade. They can update percent complete, which flows back into your master schedule.",
+  },
+  {
+    question: "Do you have CPM (Critical Path Method) scheduling?",
+    answer: "Yes: Zerotone calculates critical path automatically and highlights it in the Gantt. You can see total float on any task and identify which sequences are driving your completion date.",
+  },
+  {
+    question: "Can I schedule by phase or by area?",
+    answer: "Both. You can organize the WBS by phase, by building area, or by trade. Tasks can span multiple areas. Most GCs use a combination: phases at the top level, trades underneath.",
+  },
+];
+
+export default function SmartSchedulingPage() {
   return (
     <>
       <ModuleHero
         badge="SMART SCHEDULING"
         title={
           <>
-            Keep every project <span className="text-primary-800">on time.</span>
+            Gantt charts that update <span className="text-primary-800">when reality does.</span>
           </>
         }
-        description="Dynamic Gantt charts that live in the cloud, update from the field, and keep your entire project team aligned on the critical path."
+        description="Drag and drop scheduling with predecessor logic, resource loading, and 3 week look aheads. Built for GCs who need a real schedule: not a $40k P6 license."
+        visual={<SchedulingHeroVisual />}
       />
+      <SchedulingProblemSolution />
       <ModuleFeaturesGrid
-        headline="Schedules that actually reflect reality."
-        description="Built for the superintendent's trailer, powerful enough for the master scheduler."
+        headline="Run the project, not the software."
+        description="Powerful logic with a drag-and-drop interface."
         features={FEATURES}
       />
       <ModuleMetrics
-        headline="Drive the project forward."
+        headline="Stop spending Fridays making PowerPoints."
         metrics={METRICS}
       />
       <ModuleTestimonial
-        quote='"The ability for our supers to update the schedule from their iPads has completely changed our weekly sub meetings. The schedule is finally a living document."'
-        authorName="General Superintendent"
-        authorTitle="Top 50 General Contractor"
+        quote="Zerotone Construct is a young product running on live construction projects today. We don't publish quotes we can't attribute, ask us on a call and we'll walk you through the real system on a real project instead."
+        authorName="The Zerotone team"
+        authorTitle="The people who build and run the system"
       />
       <RestOfZerotone />
-      <FAQSection />
+      <FAQSection items={SCHEDULING_FAQS} />
       <ModuleCTA
-        headline="Build a schedule you can trust."
-        description="Book a demo to see how we handle critical paths, baselines, and field updates."
+        headline="Run a schedule your whole team can see."
+        description="20 minute demo. We'll build a sample Gantt for a project that looks like yours."
       />
     </>
   );
 }
-

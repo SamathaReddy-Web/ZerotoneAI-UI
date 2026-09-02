@@ -4,6 +4,7 @@ import { ModuleMetrics } from "@/components/ui/modules/ModuleMetrics";
 import { ModuleTestimonial } from "@/components/ui/modules/ModuleTestimonial";
 import { ModuleCTA } from "@/components/ui/modules/ModuleCTA";
 import { BiddingProblemSolution } from "@/components/sections/bidding/BiddingProblemSolution";
+import { BiddingHeroVisual } from "@/components/sections/bidding/BiddingHeroVisual";
 import { RestOfZerotone } from "@/components/sections/RestOfZerotone";
 import { FAQSection } from "@/components/sections/FAQSection";
 
@@ -12,7 +13,7 @@ import { PackageOpen, Send, LayoutGrid, ListChecks, Paperclip, FileSignature } f
 export const metadata = {
   title: "Bidding & Precon Software | Zerotone Construct",
   description:
-    "Send bid packages to subs, collect responses, and sign contracts. A modern, AI-powered construction bidding software.",
+    "Send bid packages to subs, track responses, level bids side by side, and issue digital subcontracts. Construction bidding software for GCs. 14 day free trial.",
 };
 
 const BIDDING_FEATURES = [
@@ -66,6 +67,39 @@ const BIDDING_METRICS = [
   },
 ];
 
+const BIDDING_FAQS = [
+  {
+    id: "account",
+    question: "Do subs need a Zerotone account to submit a bid?",
+    answer: "No. Subs receive a link by email. They click it, download the bid documents, fill out the bid form, and submit: no login, no account creation. This is by design; removing friction gets you more responses.",
+  },
+  {
+    id: "database",
+    question: "Can I manage a bid list / sub database in Zerotone?",
+    answer: "Yes. Your sub list lives in Zerotone organized by trade and CSI division. When you build a bid package, Zerotone suggests subs from the relevant trades. You can import your existing sub list from CSV.",
+  },
+  {
+    id: "coverage",
+    question: "How does the scope coverage matrix work?",
+    answer: "When you set up a bid package, you define the scopes you need covered (e.g., concrete, structural, MEP, finishes). The matrix shows which scopes have at least one invited sub, which have responses, and which are still uncovered, so you can chase missing bids before bid day.",
+  },
+  {
+    id: "compare",
+    question: "Can I compare bids from multiple subs side by side?",
+    answer: "Yes. The bid leveling worksheet lines up all responses and lets you enter scope adjustments (add/deduct) for inclusions and exclusions. The leveled total appears next to each bid so you're comparing apples to apples.",
+  },
+  {
+    id: "bonded",
+    question: "Does Zerotone handle bonded and non bonded subs differently?",
+    answer: "You can flag which bids require bonding and track whether each sub has confirmed bonding availability. Bonding requirement and cost can be added as a line in the leveling worksheet.",
+  },
+  {
+    id: "itbs",
+    question: "Can I issue ITBs (Invitations to Bid) on public projects?",
+    answer: "Yes. Zerotone generates formatted ITB letters with project details, bid deadline, and scope summary. These can be sent by email or printed for USPS delivery for public work that requires documented notification.",
+  },
+];
+
 export default function BiddingSoftwarePage() {
   return (
     <>
@@ -77,6 +111,7 @@ export default function BiddingSoftwarePage() {
           </>
         }
         description="Structured bid invites that get responses. Side by side leveling that catches exclusions. Digital subcontracts that close in hours. Built for GCs who bid multiple projects at once."
+        visual={<BiddingHeroVisual />}
       />
       <BiddingProblemSolution />
       <ModuleFeaturesGrid
@@ -89,12 +124,12 @@ export default function BiddingSoftwarePage() {
         metrics={BIDDING_METRICS}
       />
       <ModuleTestimonial
-        quote='"Zerotone Construct is a young product running on live construction projects today. We don"t publish quotes we can"t attribute, ask us on a call and we"ll walk you through the real system on a real project instead."'
+        quote='"Zerotone Construct is a young product running on live construction projects today. We don&apos;t publish quotes we can&apos;t attribute, ask us on a call and we&apos;ll walk you through the real system on a real project instead."'
         authorName="The Zerotone team"
         authorTitle="The people who build and run the system"
       />
       <RestOfZerotone />
-      <FAQSection />
+      <FAQSection items={BIDDING_FAQS} />
       <ModuleCTA
         headline="Run a bid you can actually manage."
         description="20 minute demo. We'll walk through a full bid package from invite to executed subcontract."

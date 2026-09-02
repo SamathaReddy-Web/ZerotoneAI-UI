@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { X, Building2 } from "lucide-react";
+import { X, Building2, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PAIN_POINTS = [
@@ -76,7 +76,8 @@ export function BiddingProblemSolution() {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white shadow-sm"
+                  whileHover={{ x: 6 }}
+                  className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white shadow-sm cursor-default transition-shadow hover:shadow-md"
                 >
                   <div className="flex mt-0.5 h-6 w-6 shrink-0 items-center justify-center rounded-full bg-error-bg text-error-text">
                     <X className="h-3.5 w-3.5" strokeWidth={3} />
@@ -122,25 +123,31 @@ export function BiddingProblemSolution() {
                     <motion.div
                       key={i}
                       variants={itemVariants}
-                      className="group flex items-center justify-between px-5 py-4 rounded-lg bg-white border border-border-subtle shadow-sm transition-colors hover:border-primary-200"
+                      whileHover={{ scale: 1.015 }}
+                      className="group flex items-center justify-between px-5 py-4 rounded-lg bg-white border border-border-subtle shadow-sm transition-all hover:border-primary-200 hover:shadow-md cursor-pointer"
                     >
-                      <div className="flex flex-col gap-1">
-                        <span className="font-body text-[14.5px] font-medium text-text-primary">
-                          {item.trade}
-                        </span>
-                        <span className="font-data text-[13px] text-text-muted">
-                          {item.count}
-                        </span>
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-col gap-1">
+                          <span className="font-body text-[14.5px] font-medium text-text-primary">
+                            {item.trade}
+                          </span>
+                          <span className="font-data text-[13px] text-text-muted">
+                            {item.count}
+                          </span>
+                        </div>
                       </div>
-                      <span
-                        className={cn(
-                          "px-2.5 py-1 rounded-full font-data text-[11px] font-bold uppercase tracking-wider",
-                          item.tone === "success" && "bg-success/10 text-success",
-                          item.tone === "warning" && "bg-primary-50 text-primary-700"
-                        )}
-                      >
-                        {item.status}
-                      </span>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={cn(
+                            "px-2.5 py-1 rounded-full font-data text-[11px] font-bold uppercase tracking-wider",
+                            item.tone === "success" && "bg-success/10 text-success",
+                            item.tone === "warning" && "bg-primary-50 text-primary-700"
+                          )}
+                        >
+                          {item.status}
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-text-muted opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary-600" />
+                      </div>
                     </motion.div>
                   ))}
                 </div>

@@ -64,17 +64,22 @@ export function ModuleMetrics({ badge = "REAL OUTCOMES", headline, metrics }: Mo
             <motion.div
               key={i}
               variants={itemVariants}
-              className="flex flex-col items-center text-center p-8 sm:p-10 rounded-3xl border border-border bg-white shadow-sm hover:border-primary-200 hover:shadow-overlay transition-all duration-300"
+              className="group relative flex flex-col items-center text-center p-8 sm:p-10 rounded-3xl border border-border bg-white shadow-sm hover:border-primary-200 hover:shadow-overlay transition-all duration-300 overflow-hidden"
             >
-              <div className="mb-2 font-display text-5xl font-bold tracking-tight text-primary-600 sm:text-6xl">
-                {outcome.value}
+              {/* Subtle animated abstract background on hover */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-40 w-40 rounded-full bg-primary-100/50 blur-3xl opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-150 pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="mb-2 font-display text-5xl font-bold tracking-tight text-primary-600 sm:text-6xl transition-transform duration-500 group-hover:scale-105 group-hover:text-primary-700">
+                  {outcome.value}
+                </div>
+                <h3 className="mb-6 font-body text-lg font-semibold text-text-primary">
+                  {outcome.label}
+                </h3>
+                <p className="font-body text-[15.5px] leading-relaxed text-text-secondary max-w-sm">
+                  {outcome.description}
+                </p>
               </div>
-              <h3 className="mb-6 font-body text-lg font-semibold text-text-primary">
-                {outcome.label}
-              </h3>
-              <p className="font-body text-[15.5px] leading-relaxed text-text-secondary">
-                {outcome.description}
-              </p>
             </motion.div>
           ))}
         </motion.div>

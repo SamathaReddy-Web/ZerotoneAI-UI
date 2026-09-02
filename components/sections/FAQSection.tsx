@@ -67,7 +67,17 @@ const faqItems = [
   },
 ];
 
-export function FAQSection() {
+export interface FAQItem {
+  id?: string;
+  question: string;
+  answer: React.ReactNode;
+}
+
+interface FAQSectionProps {
+  items?: FAQItem[];
+}
+
+export function FAQSection({ items = faqItems }: FAQSectionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10% 0px" });
 
@@ -122,14 +132,17 @@ export function FAQSection() {
           animate={isInView ? "visible" : "hidden"}
         >
           <Accordion type="single" collapsible className="w-full">
-            {faqItems.map((item) => (
-              <AccordionItem key={item.id} value={item.id}>
-                <AccordionTrigger>{item.question}</AccordionTrigger>
-                <AccordionContent>
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+            {items.map((item, index) => {
+              const key = item.id || `faq-${index}`;
+              return (
+                <AccordionItem key={key} value={key}>
+                  <AccordionTrigger>{item.question}</AccordionTrigger>
+                  <AccordionContent>
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         </motion.div>
       </div>

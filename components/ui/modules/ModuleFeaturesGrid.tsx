@@ -2,8 +2,6 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export interface ModuleFeature {
   title: string;
@@ -68,17 +66,22 @@ export function ModuleFeaturesGrid({ headline, description, features }: ModuleFe
               <motion.div
                 key={i}
                 variants={itemVariants}
-                className="group relative flex flex-col rounded-3xl border border-border-subtle bg-surface p-8 transition-all duration-300 hover:border-primary-200 hover:shadow-raised hover:-translate-y-1"
+                className="group relative flex flex-col rounded-3xl border border-border-subtle bg-surface p-8 transition-all duration-300 hover:border-primary-200 hover:shadow-raised hover:-translate-y-1 overflow-hidden"
               >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100 group-hover:text-primary-700">
-                  {feature.icon}
+                {/* Subtle gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col h-full">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary-50 border border-primary-100 text-primary-600 transition-all duration-300 group-hover:bg-primary-600 group-hover:text-white shadow-sm group-hover:shadow-md">
+                    {feature.icon}
+                  </div>
+                  <h3 className="mb-3 font-display text-xl font-bold text-text-primary transition-colors group-hover:text-primary-900">
+                    {feature.title}
+                  </h3>
+                  <p className="font-body text-[15.5px] leading-relaxed text-text-secondary">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="mb-3 font-display text-xl font-bold text-text-primary">
-                  {feature.title}
-                </h3>
-                <p className="font-body text-[15.5px] leading-relaxed text-text-secondary">
-                  {feature.description}
-                </p>
               </motion.div>
             );
           })}

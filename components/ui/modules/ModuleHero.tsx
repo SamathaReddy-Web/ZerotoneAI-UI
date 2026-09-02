@@ -35,9 +35,10 @@ interface ModuleHeroProps {
   badge: string;
   title: React.ReactNode;
   description: React.ReactNode;
+  visual?: React.ReactNode;
 }
 
-export function ModuleHero({ badge, title, description }: ModuleHeroProps) {
+export function ModuleHero({ badge, title, description, visual }: ModuleHeroProps) {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -56,7 +57,7 @@ export function ModuleHero({ badge, title, description }: ModuleHeroProps) {
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-4xl px-6 pb-20 pt-24 sm:pb-24 sm:pt-32 lg:pb-32 lg:pt-40 text-center flex flex-col items-center">
+      <div className="relative mx-auto w-full max-w-4xl px-6 pb-12 pt-20 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-32 text-center flex flex-col items-center">
         <TextItem index={0} reduceMotion={reduceMotion} className="mb-6">
           <Eyebrow>{badge}</Eyebrow>
         </TextItem>
@@ -72,6 +73,12 @@ export function ModuleHero({ badge, title, description }: ModuleHeroProps) {
             {description}
           </p>
         </TextItem>
+
+        {visual && (
+          <TextItem index={3} reduceMotion={reduceMotion} className="mt-12 w-full">
+            {visual}
+          </TextItem>
+        )}
       </div>
     </motion.section>
   );
