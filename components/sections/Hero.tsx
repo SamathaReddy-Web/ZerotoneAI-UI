@@ -27,14 +27,11 @@ function TextItem({
   className?: string;
   children: React.ReactNode;
 }) {
-  if (reduceMotion) {
-    return <div className={className}>{children}</div>;
-  }
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14 }}
+      initial={reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55, delay: TEXT_START + index * TEXT_STAGGER, ease: EASE_OUT }}
+      transition={{ duration: 0.55, delay: reduceMotion ? 0 : TEXT_START + index * TEXT_STAGGER, ease: EASE_OUT }}
       className={className}
     >
       {children}
@@ -63,6 +60,7 @@ export function Hero() {
 
   return (
     <motion.section
+      id="hero"
       ref={sectionRef}
       style={{ opacity: scrollDisabled ? 1 : heroOpacity }}
       className="relative isolate overflow-hidden border-b border-border-subtle bg-background"

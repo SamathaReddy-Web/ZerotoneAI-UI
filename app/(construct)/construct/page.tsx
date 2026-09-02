@@ -6,8 +6,7 @@ import { ConstructionStorySection } from "@/components/sections/ConstructionStor
 import { WholeTeamSection } from "@/components/sections/WholeTeamSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { FAQSection } from "@/components/sections/FAQSection";
-import { ContactSection } from "@/components/sections/ContactSection";
-import { Footer } from "@/components/sections/Footer";
+import { HomeCTA } from "@/components/sections/HomeCTA";
 
 // Real content starts here (§5.1 Hero, Phase 3) plus DataFlow (new, no
 // §5.x source). Remaining home sections (§5.2–§5.12 — stats strip,
@@ -24,8 +23,8 @@ export default function ConstructHome() {
       <WholeTeamSection />
       <PricingSection />
       <FAQSection />
-      <ContactSection />
-      <Footer />
+      <HomeCTA />
     </>
   );
 }
+

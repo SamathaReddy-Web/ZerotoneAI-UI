@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useRef } from "react";
+import Link from "next/link";
 import { motion, useInView } from "motion/react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GET_STARTED_HREF } from "@/content/navigation";
 
 const pricingPlans = [
   {
@@ -73,12 +75,13 @@ export function PricingSection() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
     },
   };
 
   return (
     <section
+      id="pricing"
       ref={containerRef}
       className="relative w-full overflow-hidden bg-background py-32"
     >
@@ -95,7 +98,7 @@ export function PricingSection() {
             variants={itemVariants}
             className="mb-6 inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-800"
           >
-            08 · PRICING
+            PRICING
           </motion.div>
 
           <motion.h2
@@ -175,8 +178,8 @@ export function PricingSection() {
 
                   {/* CTA Button */}
                   <div className="mt-auto pt-4">
-                    <a
-                      href="/contact" // Replace with actual route if needed
+                    <Link
+                      href={GET_STARTED_HREF}
                       className={cn(
                         "flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold transition-all duration-200 border",
                         isFeatured
@@ -185,7 +188,7 @@ export function PricingSection() {
                       )}
                     >
                       Talk to the Team
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </motion.div>

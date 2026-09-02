@@ -20,22 +20,24 @@ export function NavMegaMenu({
           {MODULE_CATEGORIES.map((category, i) => (
             <div
               key={category.key}
-              className="flex flex-col gap-3 opacity-0 [animation:megamenu-in_180ms_ease-out_forwards]"
+              className="flex flex-col gap-1 opacity-0 [animation:megamenu-in_180ms_ease-out_forwards]"
               style={{ animationDelay: `${i * 25}ms` }}
             >
-              <p className="font-data text-[12px] font-semibold uppercase tracking-wider text-primary-600">
-                {category.label}
-              </p>
-              <ul className="flex flex-col gap-0.5">
+              <div className="border-b border-border-subtle pb-3 mb-2">
+                <p className="text-[12px] font-bold uppercase tracking-wider text-text-muted">
+                  {category.label}
+                </p>
+              </div>
+              <ul className="flex flex-col gap-1">
                 {MODULES.filter((m) => m.category === category.key).map((mod) => (
                   <li key={mod.slug}>
                     <Link
                       href={constructHref(mod.slug)}
                       onClick={onLinkClick}
-                      className="group flex items-center gap-2 rounded-md py-1.5 pl-2.5 pr-2 text-[15px] font-medium text-text-secondary transition-colors hover:bg-primary-50 hover:text-primary-800"
+                      className="group flex items-center gap-3 rounded-md py-2 px-2 text-[15px] font-medium text-text-secondary transition-colors hover:bg-primary-50 hover:text-primary-800"
                     >
-                      <span className="h-3 w-px shrink-0 bg-border-subtle transition-colors group-hover:bg-primary-600" />
-                      {mod.label}
+                      {mod.icon && <mod.icon className="h-[18px] w-[18px] shrink-0 text-text-secondary transition-colors group-hover:text-primary-600" />}
+                      <span>{mod.label}</span>
                     </Link>
                   </li>
                 ))}

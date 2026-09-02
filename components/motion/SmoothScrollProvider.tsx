@@ -1,38 +1,77 @@
 "use client";
 
-import { type ReactNode, useEffect } from "react";
-import Lenis from "lenis";
+import { type ReactNode, useEffect, useRef } from "react";
+import { ReactLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { usePathname } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/**
- * Wires Lenis's smooth-scroll RAF loop into GSAP's ticker so
- * ScrollTrigger reads the same (interpolated) scroll position Lenis is
- * rendering, rather than the raw native scrollTop. Skipped entirely
- * under reduced motion — no Lenis instance is created at all, so native
- * instant scrolling is what reduced-motion users get.
- */
+const NAV_OFFSET = -100;
+
 export function SmoothScrollProvider({ children }: { children: ReactNode }) {
+  const lenisRef = useRef<any>(null);
+  const pathname = usePathname();
+
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
-
-    const lenis = new Lenis({ autoRaf: false });
-    lenis.on("scroll", ScrollTrigger.update);
-
-    function onTick(time: number) {
-      lenis.raf(time * 1000);
+    // Keep Lenis in sync with GSAP's ticker
+    function update(time: number) {
+      lenisRef.current?.lenis?.raf(time * 1000);
     }
-    gsap.ticker.add(onTick);
+    
+    gsap.ticker.add(update);
     gsap.ticker.lagSmoothing(0);
-
+    
     return () => {
-      gsap.ticker.remove(onTick);
-      lenis.destroy();
+      gsap.ticker.remove(update);
     };
   }, []);
 
-  return <>{children}</>;
+  // Force scroll trigger update when Lenis scrolls
+  useEffect(() => {
+    const lenis = lenisRef.current?.lenis;
+    if (lenis) {
+      lenis.on("scroll", ScrollTrigger.update);
+      return () => lenis.off("scroll", ScrollTrigger.update);
+    }
+  }, [lenisRef.current?.lenis]);
+
+  // Handle route changes
+  useEffect(() => {
+    if (lenisRef.current?.lenis) {
+      lenisRef.current.lenis.scrollTo(0, { immediate: true });
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    // Custom hash routing
+    function onClick(e: MouseEvent) {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const anchor = (e.target as HTMLElement).closest("a[href*='#']");
+      if (!anchor || anchor.getAttribute("target") === "_blank") return;
+
+      const href = anchor.getAttribute("href");
+      if (!href) return;
+      const url = new URL(href, window.location.href);
+      if (url.pathname !== window.location.pathname || !url.hash) return;
+
+      e.preventDefault();
+      history.pushState(null, "", url.hash);
+      const target = document.getElementById(url.hash.slice(1));
+      if (target && lenisRef.current?.lenis) {
+        lenisRef.current.lenis.scrollTo(target, { offset: NAV_OFFSET });
+      }
+    }
+    
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+
+  return (
+    <ReactLenis root ref={lenisRef} autoRaf={false} options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
+      {children}
+    </ReactLenis>
+  );
 }
+

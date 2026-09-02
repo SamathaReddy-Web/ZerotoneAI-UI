@@ -19,11 +19,36 @@ export function constructHref(slug: string) {
   return `${CONSTRUCT_BASE_PATH}/${slug}`;
 }
 
+import {
+  Hammer,
+  TrendingUp,
+  Building2,
+  BarChart2,
+  CalendarDays,
+  ClipboardList,
+  Clipboard,
+  CheckCircle2,
+  Clock,
+  FolderOpen,
+  Wallet,
+  ShoppingCart,
+  FileText,
+  ArrowRightLeft,
+  DollarSign,
+  Landmark,
+  Boxes,
+  Target,
+  PieChart,
+  Users,
+  Factory,
+  type LucideIcon,
+} from "lucide-react";
+
 export type ModuleCategoryKey =
-  | "preconstruction"
-  | "cost-billing"
-  | "field-schedule"
-  | "docs-admin";
+  | "win-the-work"
+  | "run-the-project"
+  | "manage-the-money"
+  | "stay-ahead";
 
 export interface ModuleCategory {
   key: ModuleCategoryKey;
@@ -31,48 +56,48 @@ export interface ModuleCategory {
 }
 
 export const MODULE_CATEGORIES: ModuleCategory[] = [
-  { key: "preconstruction", label: "Preconstruction" },
-  { key: "cost-billing", label: "Cost & Billing" },
-  { key: "field-schedule", label: "Field & Schedule" },
-  { key: "docs-admin", label: "Docs & Admin" },
+  { key: "win-the-work", label: "WIN THE WORK" },
+  { key: "run-the-project", label: "RUN THE PROJECT" },
+  { key: "manage-the-money", label: "MANAGE THE MONEY" },
+  { key: "stay-ahead", label: "STAY AHEAD" },
 ];
 
 export interface ModuleLink {
   label: string;
   slug: string;
   category: ModuleCategoryKey;
+  icon: LucideIcon;
 }
 
 export const MODULES: ModuleLink[] = [
-  // Preconstruction
-  { label: "Bidding & Precon", slug: "construction-bidding-software", category: "preconstruction" },
-  { label: "Estimate", slug: "construction-estimating-software", category: "preconstruction" },
-  { label: "Cost Codes", slug: "construction-cost-codes", category: "preconstruction" },
-  { label: "Buildings", slug: "construction-buildings", category: "preconstruction" },
+  // WIN THE WORK
+  { label: "Bidding & Precon", slug: "construction-bidding-software", category: "win-the-work", icon: Hammer },
+  { label: "Estimate", slug: "construction-estimating-software", category: "win-the-work", icon: TrendingUp },
+  { label: "Buildings", slug: "construction-buildings", category: "win-the-work", icon: Building2 },
+  { label: "Cost Codes", slug: "construction-cost-codes", category: "win-the-work", icon: BarChart2 },
 
-  // Cost & Billing
-  { label: "Budget, POs & Bills", slug: "construction-budget-software", category: "cost-billing" },
-  { label: "Purchasing", slug: "construction-purchasing-software", category: "cost-billing" },
-  { label: "Bills", slug: "construction-bills-software", category: "cost-billing" },
-  { label: "Accounting & GL", slug: "construction-accounting-software", category: "cost-billing" },
-  { label: "Statement of Values (SOV)", slug: "schedule-of-values-software", category: "cost-billing" },
-  { label: "Vendor Master", slug: "construction-vendor-management", category: "cost-billing" },
+  // RUN THE PROJECT
+  { label: "Smart Scheduling", slug: "construction-scheduling-software", category: "run-the-project", icon: CalendarDays },
+  { label: "Daily Logs", slug: "construction-daily-logs", category: "run-the-project", icon: ClipboardList },
+  { label: "RFI Manager", slug: "rfi-software", category: "run-the-project", icon: Clipboard },
+  { label: "Submittals", slug: "construction-submittals-software", category: "run-the-project", icon: CheckCircle2 },
+  { label: "Delays", slug: "construction-delay-tracking", category: "run-the-project", icon: Clock },
+  { label: "Closeout & Punchlist", slug: "punchlist-software", category: "run-the-project", icon: FolderOpen },
 
-  // Field & Schedule
-  { label: "Smart Scheduling", slug: "construction-scheduling-software", category: "field-schedule" },
-  { label: "Daily Logs", slug: "construction-daily-logs", category: "field-schedule" },
-  { label: "Delays", slug: "construction-delay-tracking", category: "field-schedule" },
-  { label: "Project Tracker", slug: "construction-project-tracker", category: "field-schedule" },
-  { label: "Inventory & Materials", slug: "construction-inventory-software", category: "field-schedule" },
-  { label: "Closeout & Punchlist", slug: "punchlist-software", category: "field-schedule" },
+  // MANAGE THE MONEY
+  { label: "Budget, POs & Bills", slug: "construction-budget-software", category: "manage-the-money", icon: Wallet },
+  { label: "Purchasing", slug: "construction-purchasing-software", category: "manage-the-money", icon: ShoppingCart },
+  { label: "Bills", slug: "construction-bills-software", category: "manage-the-money", icon: FileText },
+  { label: "Change Orders", slug: "change-order-management", category: "manage-the-money", icon: ArrowRightLeft },
+  { label: "SOV", slug: "schedule-of-values-software", category: "manage-the-money", icon: DollarSign },
+  { label: "Accounting & GL", slug: "construction-accounting-software", category: "manage-the-money", icon: Landmark },
+  { label: "Inventory", slug: "construction-inventory-software", category: "manage-the-money", icon: Boxes },
 
-  // Docs & Admin
-  { label: "Change Orders", slug: "change-order-management", category: "docs-admin" },
-  { label: "Submittals", slug: "construction-submittals-software", category: "docs-admin" },
-  { label: "RFI Manager", slug: "rfi-software", category: "docs-admin" },
-  { label: "Reports", slug: "construction-reporting-software", category: "docs-admin" },
-  { label: "Settings", slug: "construction-project-settings", category: "docs-admin" },
-  { label: "Users & Roles", slug: "construction-team-management", category: "docs-admin" },
+  // STAY AHEAD
+  { label: "Project Tracker", slug: "construction-project-tracker", category: "stay-ahead", icon: Target },
+  { label: "Reports", slug: "construction-reporting-software", category: "stay-ahead", icon: PieChart },
+  { label: "Users & Roles", slug: "construction-team-management", category: "stay-ahead", icon: Users },
+  { label: "Vendor Master", slug: "construction-vendor-management", category: "stay-ahead", icon: Factory },
 ];
 
 export const PRICING_HREF = `${CONSTRUCT_BASE_PATH}#pricing`;
@@ -101,13 +126,21 @@ export const FOOTER_PLATFORM_LINKS: { label: string; slug: string }[] = [
   { label: "Change Orders", slug: "change-order-management" },
 ];
 
-export const FOOTER_SECONDARY_LINKS: { label: string; slug: string }[] = [
+export const FOOTER_SECONDARY_LINKS: { label: string; slug: string; highlight?: boolean }[] = [
   { label: "SOV & Billing", slug: "schedule-of-values-software" },
   { label: "Accounting & GL", slug: "construction-accounting-software" },
   { label: "Vendor Management", slug: "construction-vendor-management" },
   { label: "Daily Logs", slug: "construction-daily-logs" },
   { label: "Reports", slug: "construction-reporting-software" },
   { label: "Inventory & Materials", slug: "construction-inventory-software" },
+];
+
+export const FOOTER_COMPANY_LINKS: { label: string; slug: string }[] = [
+  { label: "Zerotone home", slug: "" },
+  { label: "About", slug: "about" },
+  { label: "Security & data", slug: "security" },
+  { label: "Privacy", slug: "privacy" },
+  { label: "Terms", slug: "terms" },
 ];
 
 // The doc lists these 4 social channels but only gives a URL for WhatsApp.

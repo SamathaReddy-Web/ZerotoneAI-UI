@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { craneGreyMaterial, craneYellowMaterial, craneBlueMaterial, counterweightMaterial, steelMaterial } from "./materials";
+import { craneGreyMaterial, safetyYellowMaterial, craneBlueMaterial, counterweightMaterial, steelMaterial } from "./materials";
 
 const MAST_WIDTH = 0.3;
 const SEGMENT_HEIGHT = 1.15;

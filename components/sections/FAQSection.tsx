@@ -73,16 +73,16 @@ export function FAQSection() {
 
   const headerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
   };
 
   const accordionVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
   };
 
   return (
-    <section ref={containerRef} className="relative w-full bg-background py-24 md:py-32">
+    <section id="faq" ref={containerRef} className="relative w-full bg-background py-24 md:py-32">
       <div className="mx-auto max-w-4xl px-6 md:px-12">
         
         {/* Section Header */}
@@ -93,7 +93,7 @@ export function FAQSection() {
             animate={isInView ? "visible" : "hidden"}
             className="mb-6 inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-800"
           >
-            09 · BEFORE YOU COMMIT
+            BEFORE YOU COMMIT
           </motion.div>
 
           <motion.h2

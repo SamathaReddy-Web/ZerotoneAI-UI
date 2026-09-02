@@ -64,7 +64,7 @@ const teamItems = [
 
 // 2. Custom Card Renderer
 function CustomTeamCard(item: CardStackItem, state: { active: boolean; index: number }) {
-  const Icon = item.icon as React.ElementType;
+  const Icon = item.icon as any;
   const { active } = state;
 
   return (
@@ -155,7 +155,7 @@ export function WholeTeamSection() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="mb-6 inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-800"
           >
-            06 · BUILT FOR YOUR WHOLE TEAM
+            BUILT FOR YOUR WHOLE TEAM
           </motion.div>
 
           <motion.h2

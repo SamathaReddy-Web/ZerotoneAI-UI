@@ -107,7 +107,6 @@ export function Nav() {
         className={`sticky top-0 z-30 transition-[padding] duration-300 ease-out ${
           scrolled ? "px-3 pt-3 sm:px-4 sm:pt-4" : "px-0 pt-0"
         }`}
-        onMouseLeave={handleMouseLeave}
       >
         <div
           className={`mx-auto flex h-16 w-full items-center justify-between border transition-[max-width,border-radius,background-color,border-color,box-shadow,padding] duration-300 ease-out ${
@@ -116,12 +115,12 @@ export function Nav() {
               : "max-w-7xl border-transparent bg-surface px-6"
           }`}
         >
-          <Link href={CONSTRUCT_BASE_PATH} className="flex items-center">
+          <Link href={`${CONSTRUCT_BASE_PATH}#hero`} className="flex items-center">
             <Logo />
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex">
-            <div onMouseEnter={handleMouseEnter}>
+            <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <button
                 ref={triggerRef}
                 aria-expanded={modulesOpen}
