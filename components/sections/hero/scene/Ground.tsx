@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import "@react-three/fiber";
 import {
   concreteMaterial,
   formworkMaterial,
@@ -103,7 +104,6 @@ function GlowingCircuitTraces() {
  * - Central spine reinforcement ridge along crown
  * - Dual lateral aerodynamic vent flutes
  * - Dark interior suspension harness visible at base
- * - Crisp blue "J" logos on front and side
  */
 export function Helmet({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
   // Main Dome Shell (32x24 segments for butter-smooth curve)
@@ -119,6 +119,36 @@ export function Helmet({ position, rotationY = 0 }: { position: [number, number,
   const sideFluteGeo = useMemo(() => new THREE.BoxGeometry(0.035, 0.025, 0.36), []);
   // Interior Suspension Harness Rim
   const harnessRingGeo = useMemo(() => new THREE.CylinderGeometry(0.28, 0.28, 0.05, 28, 1, true), []);
+
+  // Company Logo texture & material
+  const logoTexture = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    const loader = new THREE.TextureLoader();
+    const tex = loader.load("/logo-mark-transparent.png");
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }, []);
+
+  const logoMaterial = useMemo(() => {
+    if (!logoTexture) return helmetAccentMaterial;
+    return new THREE.MeshStandardMaterial({
+      map: logoTexture,
+      transparent: true,
+      roughness: 0.15,
+      metalness: 0.05,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+  }, [logoTexture]);
+
+  const frontLogoGeo = useMemo(() => new THREE.PlaneGeometry(0.12, 0.12), []);
+  const sideLogoGeo = useMemo(() => new THREE.PlaneGeometry(0.10, 0.10), []);
 
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
@@ -139,25 +169,29 @@ export function Helmet({ position, rotationY = 0 }: { position: [number, number,
       {/* 4. Dark Interior Suspension Base */}
       <mesh position={[0, -0.025, 0]} geometry={harnessRingGeo} material={helmetHarnessMaterial} />
 
-      {/* 5. Blue "J" Logo on FRONT */}
-      <group position={[0, 0.11, 0.26]} rotation={[-0.38, 0, 0]}>
-        {/* Vertical Stem */}
-        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.08, 0.01)} material={helmetAccentMaterial} />
-        {/* Bottom Curve */}
-        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.07, 0.028, 0.01)} material={helmetAccentMaterial} />
-        {/* Left Up-tick */}
-        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.04, 0.01)} material={helmetAccentMaterial} />
-      </group>
+      {/* 5. Company Logo on FRONT */}
+      <mesh
+        position={[0, 0.125, 0.268]}
+        rotation={[-0.38, 0, 0]}
+        geometry={frontLogoGeo}
+        material={logoMaterial}
+      />
 
-      {/* 6. Blue "J" Logo on RIGHT SIDE */}
-      <group position={[0.26, 0.11, 0]} rotation={[0, Math.PI / 2, -0.25]}>
-        {/* Vertical Stem */}
-        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.075, 0.01)} material={helmetAccentMaterial} />
-        {/* Bottom Curve */}
-        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.065, 0.028, 0.01)} material={helmetAccentMaterial} />
-        {/* Left Up-tick */}
-        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.038, 0.01)} material={helmetAccentMaterial} />
-      </group>
+      {/* 6. Company Logo on RIGHT SIDE */}
+      <mesh
+        position={[0.268, 0.115, 0]}
+        rotation={[0, Math.PI / 2, -0.22]}
+        geometry={sideLogoGeo}
+        material={logoMaterial}
+      />
+
+      {/* 7. Company Logo on LEFT SIDE */}
+      <mesh
+        position={[-0.268, 0.115, 0]}
+        rotation={[0, -(Math.PI / 2), 0.22]}
+        geometry={sideLogoGeo}
+        material={logoMaterial}
+      />
     </group>
   );
 }
