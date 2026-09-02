@@ -93,6 +93,22 @@ export const groundMaterial = new THREE.MeshStandardMaterial({
   metalness: 0,
 });
 
+export const robotShellMaterial = new THREE.MeshStandardMaterial({
+  color: "#f3f2ee",
+  roughness: 0.25,
+  metalness: 0.1,
+  envMapIntensity: 1.1,
+});
+
+export const robotBaseMaterial = new THREE.MeshStandardMaterial({
+  color: "#2c3038",
+  roughness: 0.4,
+  metalness: 0.35,
+  envMapIntensity: 1,
+});
+
+export const craneYellowMaterial = safetyYellowMaterial;
+
 export const neonCircuitMaterial = new THREE.MeshStandardMaterial({
   color: "#38bdf8",
   emissive: "#0284c7",
@@ -105,3 +121,4 @@ export const wireframeMaterial = new THREE.MeshBasicMaterial({
   color: "#0d47a1",
   wireframe: true,
 });
+

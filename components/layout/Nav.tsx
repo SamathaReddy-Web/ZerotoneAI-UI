@@ -100,6 +100,9 @@ export function Nav() {
 
   useEffect(() => clearTimers, []);
 
+  const isConstruct = pathname?.startsWith(CONSTRUCT_BASE_PATH);
+  const homeHref = isConstruct ? `${CONSTRUCT_BASE_PATH}#hero` : "/";
+
   return (
     <>
       <header
@@ -115,7 +118,7 @@ export function Nav() {
               : "max-w-7xl border-transparent bg-surface px-6"
           }`}
         >
-          <Link href={`${CONSTRUCT_BASE_PATH}#hero`} className="flex items-center">
+          <Link href={homeHref} className="flex items-center">
             <Logo />
           </Link>
 
@@ -149,11 +152,12 @@ export function Nav() {
 
             <NavLink href={PRICING_HREF}>Pricing</NavLink>
             <NavLink href={FAQ_HREF}>FAQ&apos;s</NavLink>
+            <NavLink href="/construct">Construct</NavLink>
           </nav>
 
           <div className="flex items-center gap-2">
             <Button href={GET_STARTED_HREF} size="md" className="hidden md:inline-flex">
-              Talk to the Team →
+              Book a Diagnostic
             </Button>
             <button
               onClick={() => setMobileOpen(true)}

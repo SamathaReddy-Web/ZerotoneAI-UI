@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
+import "@react-three/fiber";
 import {
   concreteMaterial,
   formworkMaterial,
@@ -57,16 +58,13 @@ function PrecastBarrierStack({ position }: { position: [number, number, number] 
 function GlowingCircuitTraces() {
   const traces = useMemo(() => {
     return [
-      // Main trunk lines flowing to the building foundation
+      // Foundation AI circuit pathways flowing to the structure
       { start: [-4.2, 3.2], mid: [-1.8, 3.2], end: [-1.8, 1.4] },
       { start: [-1.8, 1.4], mid: [-0.6, 1.4], end: [-0.6, 0.6] },
       { start: [3.4, 3.8], mid: [2.2, 3.8], end: [2.2, 1.8] },
       { start: [2.2, 1.8], mid: [1.4, 1.8], end: [1.4, 0.5] },
       { start: [4.0, 1.2], mid: [2.8, 1.2], end: [1.8, 0.6] },
-      // Branch connecting toward the foreground helmet
-      { start: [-0.6, 4.4], mid: [0.8, 4.4], end: [0.8, 3.2] },
-      { start: [0.8, 3.2], mid: [1.4, 3.2], end: [1.4, 2.6] },
-      { start: [-2.5, 4.0], mid: [-1.0, 4.0], end: [-1.0, 3.0] },
+      { start: [-3.2, 2.0], mid: [-1.5, 2.0], end: [-1.0, 0.8] },
     ];
   }, []);
 
@@ -96,71 +94,7 @@ function GlowingCircuitTraces() {
   );
 }
 
-/**
- * Photorealistic White Safety Hardhat matching the reference design:
- * - High-poly smooth dome shell with glossy specular reflections
- * - Flanged contoured brim with front visor peak
- * - Central spine reinforcement ridge along crown
- * - Dual lateral aerodynamic vent flutes
- * - Dark interior suspension harness visible at base
- * - Crisp blue "J" logos on front and side
- */
-export function Helmet({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {
-  // Main Dome Shell (32x24 segments for butter-smooth curve)
-  const domeGeometry = useMemo(
-    () => new THREE.SphereGeometry(0.3, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.54),
-    []
-  );
-  // Visor Brim
-  const brimGeometry = useMemo(() => new THREE.CylinderGeometry(0.34, 0.35, 0.025, 32), []);
-  const frontVisorGeo = useMemo(() => new THREE.BoxGeometry(0.24, 0.02, 0.12), []);
-  // Reinforcement Crown Ridge
-  const crownRidgeGeo = useMemo(() => new THREE.BoxGeometry(0.05, 0.04, 0.52), []);
-  const sideFluteGeo = useMemo(() => new THREE.BoxGeometry(0.035, 0.025, 0.36), []);
-  // Interior Suspension Harness Rim
-  const harnessRingGeo = useMemo(() => new THREE.CylinderGeometry(0.28, 0.28, 0.05, 28, 1, true), []);
-
-  return (
-    <group position={position} rotation={[0, rotationY, 0]}>
-      {/* 1. Glossy White Dome Shell */}
-      <mesh geometry={domeGeometry} material={helmetMaterial} castShadow receiveShadow />
-
-      {/* 2. Perimeter Flanged Brim */}
-      <mesh position={[0, -0.01, 0]} geometry={brimGeometry} material={helmetMaterial} castShadow />
-      {/* Front Visor Extension Peak */}
-      <mesh position={[0, -0.015, 0.28]} rotation={[-0.1, 0, 0]} geometry={frontVisorGeo} material={helmetMaterial} castShadow />
-
-      {/* 3. Central Crown Reinforcement Ridge */}
-      <mesh position={[0, 0.22, 0.02]} geometry={crownRidgeGeo} material={helmetMaterial} castShadow />
-      {/* Left and Right Side Flutes */}
-      <mesh position={[-0.14, 0.16, 0.02]} rotation={[0, 0, 0.2]} geometry={sideFluteGeo} material={helmetMaterial} />
-      <mesh position={[0.14, 0.16, 0.02]} rotation={[0, 0, -0.2]} geometry={sideFluteGeo} material={helmetMaterial} />
-
-      {/* 4. Dark Interior Suspension Base */}
-      <mesh position={[0, -0.025, 0]} geometry={harnessRingGeo} material={helmetHarnessMaterial} />
-
-      {/* 5. Blue "J" Logo on FRONT */}
-      <group position={[0, 0.11, 0.26]} rotation={[-0.38, 0, 0]}>
-        {/* Vertical Stem */}
-        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.08, 0.01)} material={helmetAccentMaterial} />
-        {/* Bottom Curve */}
-        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.07, 0.028, 0.01)} material={helmetAccentMaterial} />
-        {/* Left Up-tick */}
-        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.04, 0.01)} material={helmetAccentMaterial} />
-      </group>
-
-      {/* 6. Blue "J" Logo on RIGHT SIDE */}
-      <group position={[0.26, 0.11, 0]} rotation={[0, Math.PI / 2, -0.25]}>
-        {/* Vertical Stem */}
-        <mesh position={[0.025, 0.035, 0]} geometry={new THREE.BoxGeometry(0.028, 0.075, 0.01)} material={helmetAccentMaterial} />
-        {/* Bottom Curve */}
-        <mesh position={[-0.01, -0.018, 0]} geometry={new THREE.BoxGeometry(0.065, 0.028, 0.01)} material={helmetAccentMaterial} />
-        {/* Left Up-tick */}
-        <mesh position={[-0.035, 0.012, 0]} geometry={new THREE.BoxGeometry(0.028, 0.038, 0.01)} material={helmetAccentMaterial} />
-      </group>
-    </group>
-  );
-}
+export { Helmet } from "./Helmet";
 
 /** Rolled Blueprint Cylinders */
 export function Blueprints({ position, rotationY = 0 }: { position: [number, number, number]; rotationY?: number }) {

@@ -163,11 +163,18 @@ export function NavMobileDrawer({
           >
             FAQ&apos;s
           </Link>
+          <Link
+            href="/construct"
+            onClick={onClose}
+            className="rounded-md px-2.5 py-3 font-body text-[17px] font-semibold text-text-primary hover:bg-neutral-100"
+          >
+            Construct
+          </Link>
         </nav>
 
         <div className="border-t border-border-subtle p-4">
           <Button href={GET_STARTED_HREF} onClick={onClose} className="w-full">
-            Talk to the Team →
+            Book a Diagnostic
           </Button>
         </div>
       </div>

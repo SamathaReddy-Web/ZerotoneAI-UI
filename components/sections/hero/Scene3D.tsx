@@ -27,12 +27,12 @@ function AnimatedForeground({ reduceMotion }: { reduceMotion: boolean }) {
     const t = state.clock.elapsedTime;
     // Gentle subtle idle float
     groupRef.current.position.y = Math.sin(t * 1.8) * 0.03;
-    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.04 - 0.2;
+    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.04 - 0.65;
   });
 
   return (
     <group ref={groupRef}>
-      <Helmet position={[0, 0.12, 0]} rotationY={-0.3} />
+      <Helmet position={[0, 0.14, 0]} rotationY={-0.65} />
       <Blueprints position={[0.55, 0.05, 0.25]} rotationY={0.6} />
     </group>
   );
@@ -82,7 +82,7 @@ export function Scene3D({ reduceMotion = false }: Scene3DProps) {
       </group>
 
       {/* Foreground Hero Helmet & Blueprints */}
-      <group scale={3.6} position={[1.1, GROUND_Y, 3.3]}>
+      <group scale={3.5} position={[1.2, GROUND_Y, 3.85]}>
         <AnimatedForeground reduceMotion={reduceMotion} />
       </group>
 

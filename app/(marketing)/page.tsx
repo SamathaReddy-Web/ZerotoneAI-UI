@@ -1,4 +1,4 @@
-import { Navbar } from '@/components/marketing/ui/navbar';
+import { Nav } from '@/components/layout/Nav';
 import { Hero } from '@/components/marketing/ui/hero';
 import { HowItWorks } from '@/components/marketing/ui/how-it-works';
 import { Capabilities } from '@/components/marketing/ui/capabilities';
@@ -11,7 +11,7 @@ import { Footer } from '@/components/marketing/ui/footer';
 export default function Page() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Nav />
       <Hero />
       {/* REMOVED: Pilot Projects Carousel */}
       {/* NEW: Built Section with Scroll Animation Portal, moved right after Hero */}
