@@ -199,7 +199,7 @@ export function ProductStorySection() {
               <div className="h-12 lg:h-14 border-b border-border-subtle bg-surface flex items-center justify-between px-4 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 lg:w-8 lg:h-8 rounded bg-primary-900 flex items-center justify-center shadow-inner overflow-hidden">
-                    <img src="/logo-mark.png" alt="Zerotone Logo" className="w-4 h-4 lg:w-5 lg:h-5 object-contain brightness-0 invert" />
+                    <img src="/logo-mark.jpg" alt="Zerotone Logo" className="w-4 h-4 lg:w-5 lg:h-5 object-contain brightness-0 invert" />
                   </div>
                   <div className="flex flex-col">
                     <span className="hidden sm:block text-[9px] text-text-muted font-bold uppercase tracking-wider leading-none mb-0.5">Project Context</span>

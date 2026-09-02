@@ -5,6 +5,7 @@ import {
   CONTACT,
   FOOTER_PLATFORM_LINKS,
   FOOTER_SECONDARY_LINKS,
+  FOOTER_COMPANY_LINKS,
   SOCIAL_LINKS,
   constructHref,
 } from "@/content/navigation";
@@ -23,23 +24,26 @@ function FooterColumn({
   links,
 }: {
   title?: string;
-  links: { label: string; slug: string }[];
+  links: { label: string; slug: string; highlight?: boolean }[];
 }) {
   return (
     <div className="flex flex-col gap-3">
-      {title ? (
-        <p className="font-data text-[13px] font-semibold uppercase tracking-wider text-text-muted">
-          {title}
-        </p>
-      ) : (
-        <p aria-hidden="true" className="h-[14px]" />
-      )}
+      <p
+        aria-hidden={title ? undefined : "true"}
+        className={`font-data text-[13px] font-semibold uppercase tracking-wider ${
+          title ? "text-text-muted" : "invisible"
+        }`}
+      >
+        {title ?? "Platform"}
+      </p>
       <ul className="flex flex-col gap-2.5">
         {links.map((link) => (
           <li key={link.slug}>
             <Link
-              href={constructHref(link.slug)}
-              className="font-body text-[15.5px] text-text-secondary transition-colors hover:text-primary-800"
+              href={link.slug ? constructHref(link.slug) : CONSTRUCT_BASE_PATH}
+              className={`font-body text-[15.5px] transition-colors ${
+                link.highlight ? "text-primary-600 font-semibold hover:text-primary-800" : "text-text-secondary hover:text-primary-800"
+              }`}
             >
               {link.label}
             </Link>
@@ -53,9 +57,9 @@ function FooterColumn({
 export function Footer() {
   return (
     <footer className="border-t border-border-subtle bg-surface">
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
         <div className="flex flex-col gap-4">
-          <Link href={CONSTRUCT_BASE_PATH} className="flex items-center">
+          <Link href={`${CONSTRUCT_BASE_PATH}#hero`} className="flex items-center">
             <Logo />
           </Link>
           <p className="max-w-[38ch] font-body text-[15.5px] leading-relaxed text-text-secondary">
@@ -101,6 +105,7 @@ export function Footer() {
 
         <FooterColumn title="Platform" links={FOOTER_PLATFORM_LINKS} />
         <FooterColumn links={FOOTER_SECONDARY_LINKS} />
+        <FooterColumn title="Company" links={FOOTER_COMPANY_LINKS} />
       </div>
 
       <div className="border-t border-border-subtle">

@@ -131,7 +131,7 @@ export function ConstructionStorySection() {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="relative w-full h-[300vh] bg-background text-text-primary overflow-x-clip">
+    <section id="tour" ref={containerRef} className="relative w-full h-[300vh] bg-background text-text-primary overflow-x-clip">
       {/* Background ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full pointer-events-none opacity-40">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-200 rounded-full blur-[120px]" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -69,7 +69,7 @@ const POSITIONS = [
 ];
 
 export function DataFlow() {
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
 
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -154,8 +154,9 @@ export function DataFlow() {
   }, [reduceMotion]);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden border-b border-border-subtle bg-background py-16 sm:py-24">
-      {/* Background Architectural Ambient Glow */}
+    <section className="bg-background">
+      <div ref={sectionRef} className="relative overflow-hidden border-b border-border-subtle py-16 sm:py-24">
+        {/* Background Architectural Ambient Glow */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-80"
@@ -190,11 +191,11 @@ export function DataFlow() {
                 <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-surface shadow-[0_16px_40px_-10px_rgba(13,71,161,0.2)]">
                   <div className="relative h-14 w-14 overflow-hidden">
                     <Image
-                      src="/logo.png"
+                      src="/logo-mark.jpg"
                       alt="Zerotone"
                       fill
                       priority
-                      className="object-cover object-left"
+                      className="object-contain object-center"
                     />
                   </div>
                 </div>
@@ -205,26 +206,17 @@ export function DataFlow() {
             {DATA_FLOW.items.map((item, idx) => {
               const Icon = ICONS[item.icon as keyof typeof ICONS] || DocumentIcon;
               const pos = POSITIONS[idx % POSITIONS.length];
-              const isHovered = hoveredItem === item.id;
-
               return (
                 <div
                   key={item.id}
                   ref={(el) => {
                     cardRefs.current[item.id] = el;
                   }}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                  className="group absolute z-20 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-opacity duration-300 opacity-100 hover:opacity-100"
+                  className="absolute z-20 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 opacity-100"
                   style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
                 >
                   <div
-                    className={cn(
-                      "flex items-center gap-4 rounded-xl border bg-surface/95 px-5 py-3.5 shadow-raised backdrop-blur-sm transition-all duration-200",
-                      isHovered
-                        ? "border-primary-600 shadow-overlay ring-2 ring-primary-100 -translate-y-1 z-20"
-                        : "border-border hover:border-primary-300 z-10"
-                    )}
+                    className="flex items-center gap-4 rounded-xl border border-border bg-surface/95 px-5 py-3.5 shadow-raised backdrop-blur-sm transition-all duration-200 z-10"
                   >
                     <span
                       className={cn(
@@ -248,26 +240,12 @@ export function DataFlow() {
                       </span>
                     </div>
                   </div>
-
-                  {/* Micro Hover Inspection Drawer */}
-                  {isHovered && (
-                    <div className="absolute left-1/2 top-full z-40 mt-1.5 w-48 -translate-x-1/2 rounded-lg border border-primary-300 bg-surface p-2 text-center shadow-overlay animate-fade-in-up">
-                      <p className="font-data text-[10px] uppercase tracking-wider text-text-muted">
-                        Project Context
-                      </p>
-                      <p className="font-body text-[12px] font-semibold text-primary-800">
-                        {item.project}
-                      </p>
-                      <p className="mt-1 font-body text-[11px] text-text-secondary">
-                        {item.audit}
-                      </p>
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

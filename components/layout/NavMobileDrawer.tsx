@@ -126,18 +126,21 @@ export function NavMobileDrawer({
             <div className="min-h-0 overflow-hidden">
               <div className="flex flex-col gap-4 py-2 pl-4 pr-1">
                 {MODULE_CATEGORIES.map((category) => (
-                  <div key={category.key} className="flex flex-col gap-0.5">
-                    <p className="px-2.5 pb-1 font-data text-[12px] font-semibold uppercase tracking-wider text-primary-600">
-                      {category.label}
-                    </p>
+                  <div key={category.key} className="flex flex-col gap-1">
+                    <div className="border-b border-border-subtle pb-2 mb-1 px-2.5">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
+                        {category.label}
+                      </p>
+                    </div>
                     {MODULES.filter((m) => m.category === category.key).map((mod) => (
                       <Link
                         key={mod.slug}
                         href={constructHref(mod.slug)}
                         onClick={onClose}
-                        className="rounded-md px-2.5 py-2 font-body text-[15.5px] text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
+                        className="flex items-center gap-3 rounded-md px-2.5 py-2.5 font-body text-[15.5px] text-text-secondary hover:bg-neutral-100 hover:text-text-primary"
                       >
-                        {mod.label}
+                        {mod.icon && <mod.icon className="h-5 w-5 shrink-0 text-text-muted" />}
+                        <span>{mod.label}</span>
                       </Link>
                     ))}
                   </div>

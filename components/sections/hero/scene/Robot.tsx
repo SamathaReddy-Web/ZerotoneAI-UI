@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import * as THREE from "three";
-import { helmetAccentMaterial, robotBaseMaterial, robotShellMaterial } from "./materials";
+import { helmetAccentMaterial, steelMaterial, helmetMaterial } from "./materials";
 
 interface RobotProps {
   position: [number, number, number];
@@ -26,7 +26,7 @@ export function Robot({ position, rotationY = 0 }: RobotProps) {
   return (
     <group position={position} rotation={[0, rotationY, 0]}>
       {/* undercarriage */}
-      <mesh position={[0, 0.045, 0]} geometry={baseGeometry} material={robotBaseMaterial} castShadow receiveShadow />
+      <mesh position={[0, 0.045, 0]} geometry={baseGeometry} material={steelMaterial} castShadow receiveShadow />
       {[-0.13, 0.13].map((x) =>
         [-0.1, 0.1].map((z) => (
           <mesh
@@ -34,7 +34,7 @@ export function Robot({ position, rotationY = 0 }: RobotProps) {
             position={[x, 0.023, z]}
             rotation={[Math.PI / 2, 0, 0]}
             geometry={wheelGeometry}
-            material={robotBaseMaterial}
+            material={steelMaterial}
             castShadow
           />
         ))
@@ -45,14 +45,14 @@ export function Robot({ position, rotationY = 0 }: RobotProps) {
         position={[0, 0.24, 0]}
         scale={[1, 0.86, 1]}
         geometry={bodyGeometry}
-        material={robotShellMaterial}
+        material={helmetMaterial}
         castShadow
         receiveShadow
       />
       <mesh position={[0, 0.24, 0]} scale={[1, 0.86, 1]} geometry={bandGeometry} material={helmetAccentMaterial} />
 
       {/* small sensor head + single accent "eye" */}
-      <mesh position={[0, 0.37, 0]} geometry={headGeometry} material={robotShellMaterial} castShadow />
+      <mesh position={[0, 0.37, 0]} geometry={headGeometry} material={helmetMaterial} castShadow />
       <mesh position={[0, 0.37, 0.068]} geometry={eyeGeometry} material={helmetAccentMaterial} />
     </group>
   );
