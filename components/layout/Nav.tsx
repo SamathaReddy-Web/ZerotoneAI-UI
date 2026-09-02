@@ -123,8 +123,6 @@ export function Nav() {
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex">
-            <NavLink href="/construct">Construct</NavLink>
-
             <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <button
                 ref={triggerRef}
@@ -154,6 +152,7 @@ export function Nav() {
 
             <NavLink href={PRICING_HREF}>Pricing</NavLink>
             <NavLink href={FAQ_HREF}>FAQ&apos;s</NavLink>
+            <NavLink href="/construct">Construct</NavLink>
           </nav>
 
           <div className="flex items-center gap-2">
